@@ -1,0 +1,1 @@
+# snobfit-matlab-class
