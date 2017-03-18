@@ -69,7 +69,7 @@ function checkName(SNOB)
             end	
 		end
 
-		if ~strcmp(valid_name,SNOB.name)
+		if ~strcmp(valid_name,SNOB.name) && ~isempty(valid_name)
 			SNOB.name = valid_name;
 			fprintf('Name changed to %s to prevent naming conflict!\r\n',valid_name) % JHB - removed , & added \r
 		end
