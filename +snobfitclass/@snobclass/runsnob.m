@@ -1,10 +1,17 @@
 function runsnob(SNOB)
 	
 	import snobfitclass.snobfcn.*
+    
+    % JHB ADDED - CREATES THE WORKING DIR
+    if ~isdir(fullfile(SNOB.filepath, 'Working')) % full file is platform independent
+        mkdir(fullfile(SNOB.filepath, 'Working'))
+    end
 
 	% specify path to working file
-	working_file = [SNOB.filepath,'/Working/',SNOB.name];
+	working_file = fullfile(SNOB.filepath,'Working',SNOB.name); % JHB - platform independent folder naming
+    
 
+    
 	stop_condition = 0;
 
 	if ~SNOB.continuing

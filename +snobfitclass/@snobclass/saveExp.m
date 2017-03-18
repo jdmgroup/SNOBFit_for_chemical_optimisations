@@ -7,13 +7,15 @@ function saveExp(SNOB)
 	end
 
 	% Create folder with the experiment name
-	savepath = [SNOB.filepath,'/Results/',SNOB.name];
+	savepath = fullfile(SNOB.filepath,'Results',SNOB.name); % JHB
 	if ~isdir(savepath)
 		mkdir(savepath);
-	end
+    end
 
+    % JHB - BAZ THIS WILL LIKELY CAUSE SIMILAR ISSUES TO CHECK NAME
+    % CANT ASSUME THAT LAST FILE ISN'T ONE OF THE MAC DIR FILES
 	if SNOB.continuing
-		cont_files = dir([savepath,'/',SNOB.name,'_cont(*).mat']);
+		cont_files = dir(fullfile(savepath, SNOB.name,'_cont(*).mat')); % JHB
 		if isempty(cont_files)
 			filename = [SNOB.name,'_cont(1)'];
 		else
@@ -30,7 +32,7 @@ function saveExp(SNOB)
 	end
 
 	% Save object
-	save([savepath,'/',filename],'SNOB');
+	save(fullfile(savepath,filename),'SNOB'); % JHB
 
 	% Check that the experiment has been run
 	if ~isempty(SNOB.x)
@@ -65,7 +67,7 @@ function saveExp(SNOB)
 		end
 		format = [format(1:end-1),'\n'];
 
-		fid = fopen([savepath,'/',filename,'.results.csv'],'wt');
+		fid = fopen(fullfile(savepath,[filename,'.results.csv']),'wt'); % JHB
 		fprintf(fid,hdrs);
 		for i = 1:size(results,1)
 			fprintf(fid,format,results(i,:));
@@ -129,7 +131,7 @@ function saveExp(SNOB)
 		hdrs = [hdrs,'fbest\n'];
 		summary_str = [summary_str,sprintf('%f\n',SNOB.fbest)];
 
-		fid = fopen([savepath,'/',filename,'.csv'],'wt');
+		fid = fopen(fullfile(savepath,[filename,'.csv']),'wt'); % JHB
 		fprintf(fid,hdrs);
 		fprintf(fid,summary_str);
 		fclose(fid);

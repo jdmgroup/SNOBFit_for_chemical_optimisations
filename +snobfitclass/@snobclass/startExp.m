@@ -4,7 +4,7 @@ function startExp(SNOB)
 
 	if isempty(SNOB.status)
 		error('User must input setup parameters first!')
-	end
+    end
 
 	SNOB.status = 'running';
 	notify(SNOB, 'StatusChange');
