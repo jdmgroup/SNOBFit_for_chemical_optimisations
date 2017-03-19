@@ -18,20 +18,33 @@ function checkName(SNOB)
 				% check if any files with appended numbers exist already -
 				% JHB - this test didn't work if you repeat optimisation
                 wfs = dir(fullfile(SNOB.filepath, 'Working'));
-                numbered_exists = false;
+                
                 n_valid = 0;
                 for i = 1:length(wfs)
                     if ~ismember(wfs(i).name,{'.','..','.DS_Store'}) % this deals with Mac layout files (which updates frequently and may be the last file)
-                        numbered_exists = ~isempty(regexp(wfs(i).name,'(\d)','Once')) | numbered_exists;
                         n_valid = n_valid + 1;
                         valid_wfs(n_valid) = wfs(i);
+                    end
+                end
+                
+                base_exists = false;
+                numbered_exists = false;
+                
+                base_name = SNOB.name(1:min(regexp(SNOB.name,'('))-1);
+                
+                for i = 1:length(valid_wfs)
+                    if regexp(valid_wfs(i).name,base_name)
+                        base_exists = true;
+                        if ~isempty(regexp(valid_wfs(i).name,'(\d)','Once'))
+                            numbered_exists = true;
+                        end
                     end
                 end
                 
 				%JHB - numbered_exists = exist(fullfile(SNOB.filepath,'Working',SNOB.name,'(1).mat')); % JHB
 
 				% get a list of all numbered files if they exist
-				if numbered_exists && n_valid % JHB
+				if numbered_exists && n_valid && base_exists % JHB
 					% JHB - working_extant = dir(fullfile(SNOB.filepath,'Working')); % JHB
                     
 					[~,order] = sort([valid_wfs(:).datenum]); % JHB
