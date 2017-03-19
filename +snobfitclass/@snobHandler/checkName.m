@@ -62,13 +62,22 @@ function checkName(SNOB)
 				if numbered_exists && n_base && base_exists % JHB
 					% JHB - working_extant = dir(fullfile(SNOB.filepath,'Working')); % JHB
                     
-					[~,order] = sort([base_wfs(:).datenum]); % JHB
-					working_names = {base_wfs(order).name}; % JHB
-					last_file = working_names{end};
-					number_start = max(regexp(last_file,'(')) + 1;
-					last_number = str2num(last_file(number_start:end-5));
-					next_number = last_number + 1;
-					valid_name = [SNOB.name(1:number_start-1),num2str(next_number),')']; % JHB
+					%[~,order] = sort([base_wfs(:).datenum]); % JHB
+					%working_names = {base_wfs(order).name}; % JHB
+					%last_file = working_names{end};
+                    max_num = 0;
+                    for i = 1:length(base_wfs)
+                        if ~isempty(regexp(base_wfs(i).name,'(\d)'))
+                            number_start = max(regexp(base_wfs(i).name,'(')) + 1;
+                            num = str2num(base_wfs(i).name(number_start:end-5));
+                            if num > max_num
+                                max_num = num;
+                            end
+                        end
+                    end
+                     	
+					next_number = max_num + 1;
+					valid_name = [base_name,'(',num2str(next_number),')']; % JHB
 				else
 					valid_name = [SNOB.name,'(1)'];
 				end
@@ -128,7 +137,7 @@ function checkName(SNOB)
     if ~strcmp(valid_name,SNOB.name) && ~isempty(valid_name)
 			SNOB.name = valid_name;
 			fprintf('Name changed to %s to prevent naming conflict!\r\n',valid_name) % JHB - removed , & added \r
-		end
+    end
 
 end
 
