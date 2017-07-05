@@ -1,7 +1,7 @@
 # Creating Your Own SNOBFit Optimisation
 **Barnaby Walker, James Bannock, Adrian Nightingale, and John deMello**
 
-In our article, '*Tuning Reaction Products by Constrained Optimisation*', we describe an approach to formulating chemical syntheses, with several competing requirements on the outputs, as soft constrained optimisations. The algorithm we used was the Stable Noisy Optimisation by Branch and Fit, or SNOBFit, algorithm proposed by [Huyer and Neumaier](https://www.mat.univie.ac.at/~neum/ms/snobfit.pdf). For ease of use, we developed a MATLAB class-based wrapper for the SNOBFit [implementation provided by Huyer and Neumaier](http://www.mat.univie.ac.at/~neum/software/snobfit/).
+In our article, '*Tuning Reaction Products by Constrained Optimisation*', we describe an approach to formulating chemical syntheses, with several competing requirements on the outputs, as soft constrained optimisations. The algorithm we used was the Stable Noisy Optimisation by Branch and Fit, or SNOBFit, algorithm proposed by [Huyer and Neumaier](https://www.mat.univie.ac.at/neum/ms/snobfit.pdf). For ease of use, we developed a MATLAB class-based wrapper for the SNOBFit [implementation provided by Huyer and Neumaier](http://www.mat.univie.ac.at/neum/software/snobfit/).
 
 In this folder you will find tutorials on how to install and use our MATLAB package to run an optimisation with SNOBFit, and how to use it to run a soft constrained optimisation. In this tutorial we will explain how to define your own, custom optimsation.
 
@@ -81,13 +81,13 @@ snobfit_object.softfcn = 'hsf18'  % constraint function
 The information above, as well as in the other tutorials, should be all you need to define and run your own optimisation. However, doing so for a chemical synthesis might require a few more steps.
 
 ### Formulating the Chemical Optimisation
-Firstly, you will need to formulate the requirements of your chemical synthesis into a system of objective and constraint functions. In our paper we optimised a synthesis with four competing products: X~0~, X~1~, X~2~, and X~3~. One objective for us was to minimise the amount of X~3~ and keep the conversion to X~1~ and X~2~ above 90 %, while getting more X~2~ than X~1~.
+Firstly, you will need to formulate the requirements of your chemical synthesis into a system of objective and constraint functions. In our paper we optimised a synthesis with four competing products: X0, X1, X2, and X3. One objective for us was to minimise the amount of X3 and keep the conversion to X1 and X2 above 90 %, while getting more X2 than X1.
 
 We translated this into:
 ```
-f = [X~3~]                     # objective function
-F~1~ = 0.9 < [X~1~] + [X~2~]   # a constraint
-F~2~ = [X~1~] / [X~2~] < 0.5   # another constraint
+f = [X3]                     # objective function
+F1 = 0.9 < [X1] + [X2]   # a constraint
+F2 = [X1] / [X2] < 0.5   # another constraint
 ```
 
 ### Writing Your Chemical Optimisation Files
