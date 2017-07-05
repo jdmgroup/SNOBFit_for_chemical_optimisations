@@ -123,13 +123,20 @@ function saveExp(SNOB)
 		for i = 1:SNOB.n
 			hdrs = [hdrs,'xbest',num2str(i),','];
 			if SNOB.combo | SNOB.soft
-				summary_str = [summary_str,sprintf('%f,',SNOB.xsoft(i))];
+				if length(SNOB.xsoft) > 0:
+					summary_str = [summary_str,sprintf('%f,',SNOB.xsoft(i))];
+				end
 			else
 				summary_str = [summary_str,sprintf('%f,',SNOB.xbest(i))];
 			end
 		end
 		hdrs = [hdrs,'fbest\n'];
 		summary_str = [summary_str,sprintf('%f\n',SNOB.fbest)];
+		if length(SNOB.xsoft) > 0
+			hdrs = [hdrs,'fsoft\n'];
+			summary_str = [summary_str,sprintf('%f\n',SNOB.fsoft)];
+		end
+
 
 		fid = fopen(fullfile(savepath,[filename,'.csv']),'wt'); % JHB
 		fprintf(fid,hdrs);

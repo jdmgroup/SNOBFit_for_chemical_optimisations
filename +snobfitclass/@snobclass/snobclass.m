@@ -5,6 +5,7 @@ classdef snobclass < handle
 		xglob;		% Expected global minimisers
 		uncert;		% Uncertainty in f
 		xsoft;		% coordinates that satisfy soft condition and give best f
+		fsoft;      % soft merit value at best feasible point
 		next;		% next points to investigate
 		created;	% date and time the experiment was created
 		softstart = 0;	% number of calls after which soft method started (only applies to combo)

@@ -18,6 +18,7 @@ function flag = checkTermination(SNOB)
 				soft_points = find(SNOB.f <= SNOB.fglob & in_lower >= 0 & in_upper >= 0);
 				if ~isempty(soft_points)
 					SNOB.xsoft = SNOB.x(soft_points, :);
+					SNOB.fsoft = SNOB.fm(soft_points, 1);
 					flag = 1;
 				end
 
