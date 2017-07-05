@@ -7,16 +7,16 @@ function loadPrevious(SNOB,src,event)
 		if SNOB.continuing
 
 			% check if working file already exists
-			working_exists = exist([SNOB.filepath,'/Working/',SNOB.name,'.mat']);
+			working_exists = exist(fullfile(SNOB.filepath,'Working',[SNOB.name,'.mat']),'file'); % JHB
 			
 			% check if Results folder already exists
-			results_exists = isdir([SNOB.filepath,'/Results/',SNOB.name]);
+			results_exists = isdir(fullfile(SNOB.filepath,'Results',SNOB.name)); % JHB
 			
 			if working_exists | results_exists
 				if ~results_exists
 
 					% if there isnt finished snobfit object, load it in from the working file
-					old_snob = load([SNOB.filepath,'/Working/',SNOB.name,'.mat']);
+					old_snob = load(fullfile(SNOB.filepath,'Working',[SNOB.name,'.mat'])); % JHB
 
 					% set values from previous experiment, if they havent been set already
 					if isempty(SNOB.x)
@@ -31,14 +31,14 @@ function loadPrevious(SNOB,src,event)
 					end
 				else
 					% check if there are any numbered, already continued experiments
-					cont_files = dir([SNOB.filepath,'/Results/',SNOB.name,'/',SNOB.name,'_cont(*).mat']);
+					cont_files = dir(fullfile(SNOB.filepath,'Results',SNOB.name,SNOB.name,'_cont(*).mat')); % JHB
 
 					if ~isempty(cont_files)
 						[~,order] = sort([cont_files(:).datenum]);
 						cont_names = {cont_files(order).name};
-						old_snob = load([SNOB.filepath,'/Results/',SNOB.name,'/',cont_names{end}]);
+						old_snob = load(fullfile(SNOB.filepath,'Results',SNOB.name,cont_names{end})); % JHB
 					else
-						old_snob = load([SNOB.filepath,'/Results/',SNOB.name,'/',SNOB.name,'.mat']);
+						old_snob = load(fullfile(SNOB.filepath,'Results',SNOB.name,SNOB.name,'.mat')); % JHB
 					end
 
 					% if there is a finished snobfit object, we can load some more variables

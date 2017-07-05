@@ -1,4 +1,4 @@
-function checkPath(SNOB,src,event)
+function checkPath(SNOB) % JHB
 
 	filepath = SNOB.filepath;
 
@@ -7,14 +7,13 @@ function checkPath(SNOB,src,event)
 		mkdir(filepath);
 	end
 
-	working_extant = dir([filepath,'/Working']);
-	if isempty(working_extant)
-		mkdir([filepath,'/Working']);
+	
+	if ~exist(fullfile(filepath,'Working'),'dir') % JHB
+		mkdir(fullfile(filepath,'Working'));
 	end
 
-	results_extant = dir([filepath,'/Results']);
-	if isempty(results_extant)
-		mkdir([filepath,'/Results']);
+	if ~exist(fullfile(filepath,'Results'),'dir') % JHB
+		mkdir(fullfile(filepath,'Results'));
 	end
 
 end

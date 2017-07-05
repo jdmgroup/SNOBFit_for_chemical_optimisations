@@ -121,9 +121,9 @@ classdef snobclass < handle
 
 			% set default filepath
 			if isunix
-				SNOB.filepath = '~/Documents/SNOBFIT';
+				SNOB.filepath = '~/Documents/MATLAB/SNOBFIT';
 			else
-				SNOB.filepath = 'C:\Users\jdmgroup\Documents\Baz\SNOBFIT';
+				SNOB.filepath = ['C:\Users\', getenv('USERNAME'), '\Documents\MATLAB\SNOBFIT'];
 			end
 
 			snobfitclass.snobHandler.addOutput(SNOB);		% Add event listeners
