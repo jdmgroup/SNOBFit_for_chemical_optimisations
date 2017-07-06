@@ -106,7 +106,7 @@ function runsnob(SNOB)
 		% Check if global mimimum found
 		stop_condition = SNOB.checkTermination();
 
-		pause(1);
+		pause(SNOB.plot_delay);
 
 	end
 
