@@ -46,12 +46,8 @@ function runcombo(SNOB)
 
         % check if there are any valid points
         isvalid = find(sum(repmat(SNOB.F1',SNOB.npoint,1) <= F & F <= repmat(SNOB.F2',SNOB.npoint,1),2) == length(SNOB.F1));
+        params = struct('bounds',{SNOB.u,SNOB.v},'nreq',SNOB.nreq,'p',SNOB.p);
 
-        params = struct('bounds',{SNOB.u,SNOB.v},'nreq',SNOB.nreq,'p',SNOB.p); 
-        Fdiff = [];
-
-        % Set the target of the hard snobfit part to the lower bound
-        snob_target = SNOB.F1'; %'
     else
         x_old = SNOB.xVirt;
 		f = SNOB.f;
@@ -65,15 +61,25 @@ function runcombo(SNOB)
     if ~SNOB.continuing | isinf(SNOB.f0)
         fprintf('finding f0 by SNOBFit...\n')
         while isempty(isvalid)
-            % want to minimise the difference between F and the lower bounds
-            Fdiff = sum(abs(repmat(snob_target,length(f),1)-F),2);
-            Fdiff(:,2) = sqrt(eps);
+            % want to minimise the penalty on F
+            above_bounds = SNOB.F - repmat(SNOB.F2', length(SNOB.F), 1);
+            below_bounds = repmat(SNOB.F1', length(SNOB.F), 1) - SNOB.F;
+
+            above_bounds(above_bounds <= 0) = 0;
+            below_bounds(below_bounds <= 0) = 0;
+
+            violation = sum(above_bounds.^2 ./ repmat(SNOB.sigma', length(SNOB.F), 1).^2, 2);
+            violation = violation + sum(below_bounds.^2 ./ repmat(SNOB.sigma', length(SNOB.F), 1).^2, 2);
+
+            penalty = 2 * violation ./ (1 + violation);
+
+            penalty(:,2) = sqrt(eps);
 
             % call snobfit to recommend points
             if SNOB.ncall0 == SNOB.npoint
-                [request,xbest,fbest] = snobfit(working_file, x_old, Fdiff, params, SNOB.dx);
+                [request,xbest,fbest] = snobfit(working_file, x_old, penalty, params, SNOB.dx);
             else
-                [request,xbest,fbest] = snobfit(working_file, x_old, Fdiff, params);
+                [request,xbest,fbest] = snobfit(working_file, x_old, penalty, params);
             end
 
             % extract recommended points
