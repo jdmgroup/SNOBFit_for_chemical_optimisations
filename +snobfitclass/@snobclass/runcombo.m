@@ -188,7 +188,7 @@ function runcombo(SNOB)
 		fm(:,2) = sqrt(eps);
 
 		SNOB.x = [SNOB.x;x];
-		SNOB.xVirt = [SNOB.xVirt;x_old]
+		SNOB.xVirt = [SNOB.xVirt;x_old];
 		SNOB.f = [SNOB.f;f];
 		SNOB.F = [SNOB.F;F];
 		SNOB.fm = [SNOB.fm;fm(:,1)];
