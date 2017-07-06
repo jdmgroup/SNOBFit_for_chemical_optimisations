@@ -75,67 +75,80 @@ function saveExp(SNOB)
 		fclose(fid);
 
 		% Save a text summary of the experiment with the setup and best point
-		hdrs = 'Experiment,Created,Function,Method,';
+		hdrs = 'Experiment,Created,Function,Method';
 		summary_str = sprintf('%s,%s,%s,',SNOB.name,SNOB.created,SNOB.fcn);
 		if SNOB.soft
-			summary_str = [summary_str,'soft,'];
+			summary_str = [summary_str,'soft'];
 		elseif SNOB.combo
-			summary_str = [summary_str,'combo,'];
+			summary_str = [summary_str,'combo'];
 		else
-			summary_str = [summary_str,'normal,'];
+			summary_str = [summary_str,'normal'];
 		end
 
-		if SNOB.soft | SNOB.combo
-			hdrs = [hdrs,'softfcn,softstart,'];
-			summary_str = [summary_str,sprintf('%s,%d,',SNOB.softfcn,SNOB.softstart)];
+		if SNOB.soft || SNOB.combo
+			hdrs = [hdrs,',softfcn,softstart'];
+			summary_str = [summary_str,sprintf(',%s,%d',SNOB.softfcn,SNOB.softstart)];
 			for i = 1:length(SNOB.sigma)
-				hdrs = [hdrs,sprintf('sigma%d,',i)];
-				summary_str = [summary_str,sprintf('%f,',SNOB.sigma(i))];
+				hdrs = [hdrs,sprintf(',sigma%d',i)];
+				summary_str = [summary_str,sprintf(',%f',SNOB.sigma(i))];
 			end
 			for i = 1:length(SNOB.F1)
-				hdrs = [hdrs,sprintf('F1_%d,',i)];
+				hdrs = [hdrs,sprintf(',F_lower%d',i)];
 				if isinf(SNOB.F1)
-					summary_str = [summary_str,sprintf('%s,','-inf')];
+					summary_str = [summary_str,sprintf(',%s','-inf')];
 				else
-					summary_str = [summary_str,sprintf('%f,',SNOB.F1(i))];
+					summary_str = [summary_str,sprintf(',%f',SNOB.F1(i))];
 				end
 			end
 			for i = 1:length(SNOB.F2)
-				hdrs = [hdrs,sprintf('F2_%d,',i)];
+				hdrs = [hdrs,sprintf(',F_upper%d',i)];
 				if isinf(SNOB.F2(i))
-					summary_str = [summary_str,sprintf('%s,','inf')];
+					summary_str = [summary_str,sprintf(',%s','inf')];
 				else
-					summary_str = [summary_str,sprintf('%f,',SNOB.F2(i))];
+					summary_str = [summary_str,sprintf(',%f',SNOB.F2(i))];
 				end
 			end
 		end
 
-		hdrs = [hdrs,'linked,'];
-		summary_str = [summary_str,sprintf('%d,',double(SNOB.linked))];
+		hdrs = [hdrs,',linked'];
+		summary_str = [summary_str,sprintf(',%d',double(SNOB.linked))];
 		if SNOB.linked
-			hdrs = [hdrs,'xyMax,xyMin,maxRatio,minRatio,zMax,zMin,'];
-			summary_str = [summary_str,sprintf('%f,%f,%f,%f,%f,%f,',SNOB.xyMax,SNOB.xyMin,...
+			hdrs = [hdrs,',xyMax,xyMin,maxRatio,minRatio,zMax,zMin'];
+			summary_str = [summary_str,sprintf(',%f,%f,%f,%f,%f,%f',SNOB.xyMax,SNOB.xyMin,...
 												SNOB.maxRatio,SNOB.minRatio,SNOB.zMax,SNOB.zMin)];
 		end
 
-		hdrs = [hdrs,'ncall,ncalled,'];
-		summary_str = [summary_str,sprintf('%d,%d,',SNOB.ncall,SNOB.ncall0)];
+		hdrs = [hdrs,',ncall,ncalled'];
+		summary_str = [summary_str,sprintf(',%d,%d',SNOB.ncall,SNOB.ncall0)];
+
 		for i = 1:SNOB.n
-			hdrs = [hdrs,'xbest',num2str(i),','];
-			if SNOB.combo | SNOB.soft
-				if length(SNOB.xsoft) > 0:
-					summary_str = [summary_str,sprintf('%f,',SNOB.xsoft(i))];
+			hdrs = [hdrs,',xbest',num2str(i)];
+			summary_str = [summary_str,sprintf(',%f',SNOB.xbest(i))];
+
+		end
+		hdrs = [hdrs,',fbest'];
+		summary_str = [summary_str,sprintf(',%f',SNOB.fbest)];
+
+		if SNOB.combo || SNOB.soft
+			for i = 1:SNOB.n
+				hdrs = [hdrs,',xsoft',num2str(i)];
+				if ~isempty(SNOB.xsoft)
+					summary_str = [summary_str,sprintf(',%f',SNOB.xsoft(i))];
+				else
+					summary_str = [summary_str,sprintf(',%f',nan)];
 				end
+			end
+
+			hdrs = [hdrs,',fsoft'];
+			if length(SNOB.fsoft) > 0
+				summary_str = [summary_str,sprintf(',%f',SNOB.fsoft)];
 			else
-				summary_str = [summary_str,sprintf('%f,',SNOB.xbest(i))];
+				summary_str = [summary_str,sprintf(',%f',nan)];
 			end
 		end
-		hdrs = [hdrs,'fbest\n'];
-		summary_str = [summary_str,sprintf('%f\n',SNOB.fbest)];
-		if length(SNOB.xsoft) > 0
-			hdrs = [hdrs,'fsoft\n'];
-			summary_str = [summary_str,sprintf('%f\n',SNOB.fsoft)];
-		end
+
+		hdrs = [hdrs, '\n'];
+		summary_str = [summary_str, '\n'];
 
 
 		fid = fopen(fullfile(savepath,[filename,'.csv']),'wt'); % JHB
