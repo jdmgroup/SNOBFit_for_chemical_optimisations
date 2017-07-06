@@ -51,6 +51,7 @@ classdef snobclass < handle
 		ncallNoChange = 5; % number of same function values before terminating
 		minCalls;	% minimum number of calls before terminating
 		repeatBest = true; % option to repeat the measurement at fbest
+		plot_delay = 0; % how long to pause between snobfit calls, for plotting
 	end
 
 	properties (SetObservable, AbortSet)

@@ -223,7 +223,7 @@ function runcombo(SNOB)
 			end
 		end
 
-		pause(1);
+		pause(SNOB.plot_delay);
 
 	end
 
