@@ -94,7 +94,7 @@ In our article we optimised a cascade synthesis with four competing products: X0
 We translated this into:
 
 * Objective: Minimise [X3]
-* Constraint 1: 0.9 > ([X1] + [X2])
+* Constraint 1: 0.9 < ([X1] + [X2])
 * Constraint 2: ([X1] / [X2]) < 0.5
 
 where [X] corresponded to the mole fraction of X in the sample.
