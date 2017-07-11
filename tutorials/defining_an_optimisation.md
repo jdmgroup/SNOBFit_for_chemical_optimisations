@@ -1,97 +1,106 @@
 # Creating Your Own SNOBFit Optimisation
-**Barnaby Walker, James Bannock, Adrian Nightingale, and John deMello**
+**Barnaby Walker, James Bannock, Adrian Nightingale, and John de Mello**
 
-In our article, '*Tuning Reaction Products by Constrained Optimisation*', we describe an approach to formulating chemical syntheses, with several competing requirements on the outputs, as soft constrained optimisations. The algorithm we used was the Stable Noisy Optimisation by Branch and Fit, or SNOBFit, algorithm proposed by [Huyer and Neumaier](https://www.mat.univie.ac.at/neum/ms/snobfit.pdf). For ease of use, we developed a MATLAB class-based wrapper for the SNOBFit [implementation provided by Huyer and Neumaier](http://www.mat.univie.ac.at/neum/software/snobfit/).
+In our article, '*Tuning Reaction Products by Constrained Optimisation*', we describe an approach to formulating chemical syntheses as soft constrained optimisations with several competing requirements on the outputs. The algorithm we used was the Stable Noisy Optimisation by Branch and Fit, or SNOBFit, algorithm proposed by [Huyer and Neumaier](https://www.mat.univie.ac.at/neum/ms/snobfit.pdf). For ease of use, we developed a MATLAB class-based wrapper for the SNOBFit [implementation provided by Huyer and Neumaier](http://www.mat.univie.ac.at/neum/software/snobfit/).
 
-In this folder you will find tutorials on how to install and use our MATLAB package to run an optimisation with SNOBFit, and how to use it to run a soft constrained optimisation. In this tutorial we will explain how to define your own, custom optimsation.
+In this folder you will find tutorials on how to install our MATLAB package, how to run an standard optimisation with SNOBFit, and how to run a soft constrained optimisation.
+
+In this tutorial we will explain how to configure your own optimsation.
 
 ## Defining Your Own Functions
-Our SNOBFit interface package includes some example objective and constraint functions. However, you will more than likely want to define your own optimisation targets and constraints. To do this, you'll need to write the in the form of an objective function and constraint functions. These need to be written in the form of MATLAB function files, and stored in the correct folder in the code files.
+Our SNOBFit interface package includes some example objective and constraint functions. However, you will more than likely want to define your own optimisation targets and constraints. To do this, you will need to write them in the form of an *objective function* and a *constraint function* (which may contain multiple constraints). These need to be written in the form of MATLAB a function, and stored in the correct folder in the code files.
 
 ### SNOBFit Package Organisation
 Our SNOBFit package is organised in the following folders:
 
 ![snobfit folder structure](snob_folders.png)
 
-The **@snobclass** folder contains files defining the SNOBFit class, and the functions that it uses to run optimisations, and the **@snobHandler** folder contains functions that allow the class to handle things like plotting and saving to files. As our SNOBFit interface is a wrapper around the implementation provided by Huyer and Neumaier, it uses some of the code they wrote to call the SNOBFit algorithm. The folders **+snobfcn** and **+minq5** contain the files from their original implementation.
+The **@snobclass** folder contains files defining the SNOBFit class, and the functions that it uses to run an optimisation, and the **@snobHandler** folder contains functions that allow the class to handle things like plotting and saving to files. As our SNOBFit interface is a wrapper around the implementation provided by Huyer and Neumaier, it uses some of the code they wrote to call the SNOBFit algorithm. The folders **+snobfcn** and **+minq5** contain the files from their original implementation.
 
-The important folders for defining your own custom optimisation are **+objfcn** and **+confcn**. All of the objective function definitions are stored in **+objfcn** and all of the constraint function definitions are stored in **+confcn**. Once you've written your function definitions, you will need to save them to the appropriate folders.
+The important folders for defining your own custom optimisation are **+objfcn** and **+confcn**. All of the *objective function* definitions are stored in **+objfcn** and all of the *constraint function* definitions are stored in **+confcn**. Once you've written your function definitions, you will need to save them to the appropriate folders.
 
 ### Writing an Objective Function
 
 For our SNOBFit interface to use your objective function, you have to write it into a MATLAB function file with a specific format. It needs to:
-* Take a SNOBFit Object as its only argument
-* Unwrap the recommended points from the SNOBFit Object
-* Return the value of the object function evaluated at those points as a single number or a 1D vector
+* Take a SNOBFit object (an instance of the SNOBFit class) as its only argument
+* Return a 1D array of objective function values evaluated at each set of parameters.
 
-An example function is:
+An example function from the SNOBFit package is the *hsf18* 2D surface:
 ```
 function f = hsf18(SNOB)
-    
-    x1 = SNOB.next(:,1);
-    x2 = SNOB.next(:,2);
 
-    f = 0.01*x1.^2 + x2.^2
+    x1 = SNOB.next(:,1);      % x1 dimension
+    x2 = SNOB.next(:,2);      % x2 dimension
+
+    f = 0.01*x1.^2 + x2.^2;
 
 end
 ```
 In this example:
-* SNOB is the SNOBFit Object
-* The recommended points are stored as columns in a matrix as the SNOB.next property
-* The evaluated function values are returned in the 'f' variable
+* SNOB is the SNOBFit object
+* The parameter sets (experiments) to evaluate are stored as rows in the SNOB.next 2D array, where each column represents an input parameter (dimension)
+* For clarity, the parameters for each dimension have been unpacked from SNOB.next and assigned to *x1* and *x2*
+* The evaluated objective function values are returned as a 1D array, *f*.
 
 ### Writing a Constraint Function
 
 Like the objective function, your constraints must be written as a MATLAB function file with a specific format:
 * No matter how many constraints you have, they all go in one function file
-* That function must take a SNOBFit Object as its only argument
-* It must unpack the recommended points from the SNOBFit Object
-* It must return the values of all the constraint functions as one *n*-by-*m* matrix, where *n* is the number of recommended points and *m* is the number of constraints
+* The function must take a SNOBFit object as its only argument
+* It must return the values of all the constraint functions as one *n*-by-*m* array, where *n* is the number of experiments (rows) and *m* is the number of constraints (columns)
 
 An example:
 ```
 function F = hsf18(SNOB)
-	
-	x1 = SNOB.next(:,1);
-	x2 = SNOB.next(:,2);
 
-	F(:,1) = x1.*x2 - 25;
-	F(:,2) = x1.^2 + x2.^2 - 25;
+	x1 = SNOB.next(:,1);           % x1 dimension
+	x2 = SNOB.next(:,2);           % x2 dimension
+
+	F(:,1) = x1.*x2 - 25;          % constraint 1
+	F(:,2) = x1.^2 + x2.^2 - 25;   % constraint 2
 
 end
 ```
 In this example:
-* There are two constraints in this function definition
-* SNOB is the SNOBFit Object
-* The recommended points are unpacked from the SNOB.next property
-* Each constraint is evaluated and stored as a column in the matrix variable 'F'
+* There are two constraints
+* SNOB is the SNOBFit object
+* The recommended experiments have been unpacked from the SNOB.next property as in the previous example
+* Each constraint is evaluated and stored as a column in a 2D-array, *F*
 
 ### Naming Your Function Files
 When you save your objective and constraint function definitions to the appropriate place you must give the files a name.
 
-Any name you want is fine, as long as the **file name has the same name as your function**. For example, both functions above need to be saved as **hsf18.m**.
+Any name you want is fine so long as the **file name is the same name as your function**. For example, both functions above need to be saved as **hsf18.m**.
 
-When you set the objective and constraint functions on your SNOBFit Object you then need to give the name of the files, e.g.
+You must save *objective* functions in the **+objfcn** folder and *constraint* functions in the **+confcn** folder. In this way, the function and file names for a pair of objective and constraint functions may be the same without causing any conflicts.
+
+When you set the objective and constraint functions on your SNOBFit object you then need to give the name of the files, e.g.
 ```
 snobfit_object.fcn = 'hsf18'      % objective function
 snobfit_object.softfcn = 'hsf18'  % constraint function
 ```
+Note: You can only assign functions in the **+objfcn** folder to *'snobfit_object.fcn'*, and similarly you can only assign functions in **+confcn** to *'snobfit_object.softfcn'* .
 
 ## Defining a Chemical Optimisation
-The information above, as well as in the other tutorials, should be all you need to define and run your own optimisation. However, doing so for a chemical synthesis might require a few more steps.
+The information above, as well as in the other tutorials, should be all that you need to define and run your own optimisation. However, doing so for a chemical synthesis requires a few more steps.
 
 ### Formulating the Chemical Optimisation
-Firstly, you will need to formulate the requirements of your chemical synthesis into a system of objective and constraint functions. In our paper we optimised a synthesis with four competing products: X0, X1, X2, and X3. One objective for us was to minimise the amount of X3 and keep the conversion to X1 and X2 above 90 %, while getting more X2 than X1.
+Firstly, you will need to formulate the requirements of your chemical synthesis into a system of objective and constraint functions. In the previous examples we have been able to take the suggested parameters sets and directly determine the objective and constraint values using an algebraic expression.
+
+For chemical processes, however, there is a disconnect between the input parameters (e.g. temperature, pressure, concentration) and the reaction outputs. Any quantifiable parameter in your system can be used to form an objective or constraint function. In practice this is usually an analytical result (e.g. a metric that relates to product yield or selectivity), however you could base your optimisation on other metrics such as economic factors (e.g. space-time yield or process cost) or environmental considerations (e.g. E-factor or atom efficiency of the proposed configuration).
+
+In our article we optimised a cascade synthesis with four competing products: X0, X1, X2, and X3. One objective for us was to minimise the amount of X3 and keep the conversion to X1 and X2 above 90 %, while producing more X2 than X1.
 
 We translated this into:
-```
-f = [X3]                     # objective function
-F1 = 0.9 < [X1] + [X2]   # a constraint
-F2 = [X1] / [X2] < 0.5   # another constraint
-```
+
+* Objective: Minimise [X3]
+* Constraint 1: 0.9 > ([X1] + [X2])
+* Constraint 2: ([X1] / [X2]) < 0.5
+
+where [X] corresponded to the mole fraction of X in the sample.
 
 ### Writing Your Chemical Optimisation Files
-Another consideration is that you probably won't be evaluating your functions directly. In our case, each set of recommended points would be used as the conditions for running an automated flow reactor.
+As discussed above, it is highly probably that you will not be evaluating your functions directly. In our case, each set of recommended points would be used as the reaction conditions for running an automated flow reactor.
 
 This means your objective and constraint functions may need to call other functions that you have written. For us, our objective function called another function that took a set of conditions as the argument, ran those conditions on our flow reactor, and returned the mole fractions of the product at each point:
 ```
@@ -103,7 +112,9 @@ function f = objective(SNOB)
 
     mole_fractions = run_reactor(flow_rate1, flow_rate2, temperature);
 
-    f = mole_fractions(:,4);
+    X3 = mole_fractions(:,4);   % mole fraction of X3
+
+    f = X3;
 
 end
 ```
