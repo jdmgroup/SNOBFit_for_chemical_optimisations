@@ -45,7 +45,7 @@ function runcombo(SNOB)
         SNOB.ncall0 = SNOB.ncall0 + length(f);
 
         % check if there are any valid points
-        isvalid = find(sum(repmat(SNOB.F1',SNOB.npoint,1) <= F & F <= repmat(SNOB.F2',SNOB.npoint,1),2) == length(SNOB.F1));
+        isvalid = find(sum(repmat(SNOB.F_lower',SNOB.npoint,1) <= F & F <= repmat(SNOB.F_upper',SNOB.npoint,1),2) == length(SNOB.F_lower));
         params = struct('bounds',{SNOB.u,SNOB.v},'nreq',SNOB.nreq,'p',SNOB.p);
 
     else
@@ -53,7 +53,7 @@ function runcombo(SNOB)
 		f = SNOB.f;
 		F = SNOB.F;
 		x = SNOB.x;
-		isvalid = find(sum(repmat(SNOB.F1',length(F),1) <= F & F <= repmat(SNOB.F2',length(F),1),2) == length(SNOB.F1));
+		isvalid = find(sum(repmat(SNOB.F_lower',length(F),1) <= F & F <= repmat(SNOB.F_upper',length(F),1),2) == length(SNOB.F_lower));
         params = struct('bounds',{SNOB.u,SNOB.v},'nreq',SNOB.nreq,'p',SNOB.p);
         change = 0;
     end
@@ -62,8 +62,8 @@ function runcombo(SNOB)
         fprintf('finding f0 by SNOBFit...\n')
         while isempty(isvalid)
             % want to minimise the penalty on F
-            above_bounds = SNOB.F - repmat(SNOB.F2', length(SNOB.F), 1);
-            below_bounds = repmat(SNOB.F1', length(SNOB.F), 1) - SNOB.F;
+            above_bounds = SNOB.F - repmat(SNOB.F_upper', length(SNOB.F), 1);
+            below_bounds = repmat(SNOB.F_lower', length(SNOB.F), 1) - SNOB.F;
 
             above_bounds(above_bounds <= 0) = 0;
             below_bounds(below_bounds <= 0) = 0;
@@ -110,7 +110,7 @@ function runcombo(SNOB)
             SNOB.ncall0 = SNOB.ncall0 + length(f);
 
             % check if there are any valid points
-            isvalid = find(sum(repmat(SNOB.F1',SNOB.npoint,1) <= F & F <= repmat(SNOB.F2',SNOB.npoint,1),2) == length(SNOB.F1));
+            isvalid = find(sum(repmat(SNOB.F_lower',SNOB.npoint,1) <= F & F <= repmat(SNOB.F_upper',SNOB.npoint,1),2) == length(SNOB.F_lower));
 
             % if the number of desired runs has been exceeded, stop
             if SNOB.ncall0 > SNOB.ncall./3
@@ -139,7 +139,7 @@ function runcombo(SNOB)
         % calculate softmerit for all points looked at already
         fm = zeros(length(SNOB.f),1);
         for i = 1:length(SNOB.f)
-            fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F1,SNOB.F2,SNOB.f0,SNOB.Delta,SNOB.sigma);
+            fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
         end
         fm(:,2) = sqrt(eps);
 
@@ -183,7 +183,7 @@ function runcombo(SNOB)
 
 		fm = zeros(size(f));
 		for i = 1:SNOB.nreq
-			fm(i,1) = softmerit(f(i),F(i,:),SNOB.F1,SNOB.F2,SNOB.f0,SNOB.Delta,SNOB.sigma);
+			fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
 		end
 		fm(:,2) = sqrt(eps);
 
@@ -204,7 +204,7 @@ function runcombo(SNOB)
 
 		if SNOB.fbest < 0 && change == 0
 			K = size(SNOB.x,1);
-			ind = find(min(SNOB.F - ones(K,1)*SNOB.F1',[],2) > -eps & min(ones(K,1)*SNOB.F2' - SNOB.F,[],2) > -eps);
+			ind = find(min(SNOB.F - ones(K,1)*SNOB.F_lower',[],2) > -eps & min(ones(K,1)*SNOB.F_upper' - SNOB.F,[],2) > -eps);
 			if ~isempty(ind)
 				change = 1;
 				SNOB.f0 = min(SNOB.f(ind));
@@ -214,7 +214,7 @@ function runcombo(SNOB)
 
 				fm = zeros(K,1);
 				for i = 1:K
-					fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F1,SNOB.F2,SNOB.f0,SNOB.Delta,SNOB.sigma);
+					fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
 				end
 				fm(:,2) = sqrt(eps);
 				

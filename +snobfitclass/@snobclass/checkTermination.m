@@ -10,9 +10,9 @@ function flag = checkTermination(SNOB)
 			if SNOB.soft | SNOB.combo
 				% Check that the global minimum has been found,
 				% and the soft constraint is satisfied
-				in_lower = min(SNOB.F' - repmat(SNOB.F1,1,length(SNOB.F)) +...
+				in_lower = min(SNOB.F' - repmat(SNOB.F_lower,1,length(SNOB.F)) +...
 								  repmat(SNOB.sigma,1,length(SNOB.F)))';
-				in_upper = min(repmat(SNOB.F2,1,length(SNOB.F)) +...
+				in_upper = min(repmat(SNOB.F_upper,1,length(SNOB.F)) +...
 								  repmat(SNOB.sigma,1,length(SNOB.F))- SNOB.F')';
 
 				soft_points = find(SNOB.f <= SNOB.fglob & in_lower >= 0 & in_upper >= 0);
@@ -49,7 +49,7 @@ function flag = checkTermination(SNOB)
 				flag = 1;
 				if SNOB.soft | SNOB.combo
 	
-					delta = max(0,max(repmat(SNOB.F1',SNOB.ncall0,1) - SNOB.F, SNOB.F - repmat(SNOB.F2',SNOB.ncall0,1))./repmat(SNOB.sigma',SNOB.ncall0,1));%'
+					delta = max(0,max(repmat(SNOB.F_lower',SNOB.ncall0,1) - SNOB.F, SNOB.F - repmat(SNOB.F_upper',SNOB.ncall0,1))./repmat(SNOB.sigma',SNOB.ncall0,1));%'
 					feasible_points = find(max(delta,[],2) <= 1);
 					if ~isempty(feasible_points)
 						[fsoft, isoft] = min(SNOB.fm(feasible_points));

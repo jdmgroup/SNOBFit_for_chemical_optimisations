@@ -35,7 +35,7 @@ function startExp(SNOB)
 		if SNOB.soft | SNOB.combo
 			F = feval(['snobfitclass.confcn.',SNOB.softfcn],SNOB);
 			
-			fm = softmerit(f,F,SNOB.F1,SNOB.F2,SNOB.f0,SNOB.Delta,SNOB.sigma);
+			fm = softmerit(f,F,SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
 			
 			SNOB.F = [SNOB.F;F];
 			SNOB.fm = [SNOB.fm;fm];

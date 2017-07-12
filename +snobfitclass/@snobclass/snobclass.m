@@ -44,8 +44,8 @@ classdef snobclass < handle
 		npoint;		% Number of starting points
 		threshold = 1e-3;	% threshold for terminating minimisation
 		xstart;		% User defined starting point
-		F1;			% Lower Bounds for soft constraint function
-		F2;			% Upper Bounds for soft constraint function
+		F_lower;			% Lower Bounds for soft constraint function
+		F_upper;			% Upper Bounds for soft constraint function
 		sigma;		% slope for soft merit function
 		fbestHistory; % history of fbest for each call to snobfit
 		ncallNoChange = 5; % number of same function values before terminating
@@ -142,7 +142,7 @@ classdef snobclass < handle
 			end
 
 			if SNOB.soft
-				SNOB.sigma = 0.05.*25.*ones(length(SNOB.F1),1);
+				SNOB.sigma = 0.05.*25.*ones(length(SNOB.F_lower),1);
 			end
 
 			SNOB.name = settings.name;

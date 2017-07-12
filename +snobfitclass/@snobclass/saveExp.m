@@ -92,20 +92,20 @@ function saveExp(SNOB)
 				hdrs = [hdrs,sprintf(',sigma%d',i)];
 				summary_str = [summary_str,sprintf(',%f',SNOB.sigma(i))];
 			end
-			for i = 1:length(SNOB.F1)
+			for i = 1:length(SNOB.F_lower)
 				hdrs = [hdrs,sprintf(',F_lower%d',i)];
-				if isinf(SNOB.F1)
+				if isinf(SNOB.F_lower)
 					summary_str = [summary_str,sprintf(',%s','-inf')];
 				else
-					summary_str = [summary_str,sprintf(',%f',SNOB.F1(i))];
+					summary_str = [summary_str,sprintf(',%f',SNOB.F_lower(i))];
 				end
 			end
-			for i = 1:length(SNOB.F2)
+			for i = 1:length(SNOB.F_upper)
 				hdrs = [hdrs,sprintf(',F_upper%d',i)];
-				if isinf(SNOB.F2(i))
+				if isinf(SNOB.F_upper(i))
 					summary_str = [summary_str,sprintf(',%s','inf')];
 				else
-					summary_str = [summary_str,sprintf(',%f',SNOB.F2(i))];
+					summary_str = [summary_str,sprintf(',%f',SNOB.F_upper(i))];
 				end
 			end
 		end

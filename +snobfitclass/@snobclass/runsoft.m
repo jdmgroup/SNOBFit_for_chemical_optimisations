@@ -37,7 +37,7 @@ function runsoft(SNOB)
 	f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);
 	F = feval(['snobfitclass.confcn.',SNOB.softfcn],SNOB);
 
-	isvalid = find(sum(repmat(SNOB.F1',SNOB.npoint,1) <= F & F <= repmat(SNOB.F2',SNOB.npoint,1)));
+	isvalid = find(sum(repmat(SNOB.F_lower',SNOB.npoint,1) <= F & F <= repmat(SNOB.F_upper',SNOB.npoint,1)));
 	if ~isempty(isvalid)
 		SNOB.f0 = min(f(isvalid));
 	else
@@ -47,7 +47,7 @@ function runsoft(SNOB)
 	SNOB.Delta = median(abs(f - SNOB.f0));
 
 	for i = 1:SNOB.npoint
-		fm(i,1) = softmerit(f(i),F(i,:),SNOB.F1,SNOB.F2,SNOB.f0,SNOB.Delta,SNOB.sigma);
+		fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
 	end
 	fm(:,2) = sqrt(eps);
 
@@ -90,7 +90,7 @@ function runsoft(SNOB)
 
 		fm = zeros(size(f));
 		for i = 1:SNOB.nreq
-			fm(i,1) = softmerit(f(i),F(i,:),SNOB.F1,SNOB.F2,SNOB.f0,SNOB.Delta,SNOB.sigma);
+			fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
 		end
 		fm(:,2) = sqrt(eps);
 
@@ -110,7 +110,7 @@ function runsoft(SNOB)
 
 		if SNOB.fbest < 0 & change == 0
 			K = size(SNOB.x,1);
-			ind = find(min(SNOB.F - ones(K,1)*SNOB.F1',[],2) > -eps & min(ones(K,1)*SNOB.F2' - SNOB.F,[],2) > -eps);
+			ind = find(min(SNOB.F - ones(K,1)*SNOB.F_lower',[],2) > -eps & min(ones(K,1)*SNOB.F_upper' - SNOB.F,[],2) > -eps);
 			if ~isempty(ind)
 				change = 1;
 				SNOB.f0 = min(SNOB.f(ind));
@@ -118,7 +118,7 @@ function runsoft(SNOB)
 
 				fm = zeros(K,1);
 				for i = 1:K
-					fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F1,SNOB.F2,SNOB.f0,SNOB.Delta,SNOB.sigma);
+					fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
 				end
 				fm(:,2) = sqrt(eps);
 
