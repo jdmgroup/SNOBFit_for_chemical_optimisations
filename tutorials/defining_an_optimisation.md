@@ -167,10 +167,10 @@ In this example:
 *  Both are **1**-by-**n** arrays, where **n** is the number of constraint functions
 *  The position of each value corresponds to the column the the constraint is output to **F** in, e.g. the constraint function **X1 / X2** is output to the *first column* in our function, so the lower limit of 0.9 is the *first value* in **F_lower**
 
-You will also need to define how soft or hard each constraint function is, using the &#963 parameter:
+You will also need to define how soft or hard each constraint function is, using the &#963; parameter:
 ```
 snobfit_object.sigma = [0.3; 0.3]
 ```
-Here we have set &#963 to the same value for both constraints, but you can chose any value that seems sensible to you. One way of choosing &#963 is to define it as the maximum tolerable violation of a constraint. For our example this would mean that we could tolerate anything down to 0.6 for X1 + X2, and anything up to 0.8 for X1 / X2.
+Here we have set &#963; to the same value for both constraints, but you can chose any value that seems sensible to you. One way of choosing &#963; is to define it as the maximum tolerable violation of a constraint. For our example this would mean that we could tolerate anything down to 0.6 for X1 + X2, and anything up to 0.8 for X1 / X2.
 
 #### This should be all of the information that you need to successfully run a soft constrained optimisation using our SNOBFit interface, for a chemical synthesis. :microscope: :thumbsup:
