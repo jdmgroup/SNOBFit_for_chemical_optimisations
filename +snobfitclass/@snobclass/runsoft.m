@@ -14,9 +14,14 @@ function runsoft(SNOB)
 	SNOB.ncall0 = 0;
 	change = 0;
 
-	x = rand(SNOB.npoint-1,SNOB.n);
-	x = x*diag(SNOB.v - SNOB.u) + ones(SNOB.npoint-1,1)*SNOB.u';
-	x = [SNOB.xstart;x];
+	if isempty(SNOB.xstart)
+		x = rand(SNOB.npoint,SNOB.n);
+		x = x*diag(SNOB.v - SNOB.u) + ones(SNOB.npoint,1)*SNOB.u';
+	else
+		x = rand(SNOB.npoint-1,SNOB.n);
+		x = x*diag(SNOB.v - SNOB.u) + ones(SNOB.npoint-1,1)*SNOB.u';
+		x = [SNOB.xstart;x];
+	end
 
 	for i = 1:SNOB.npoint
 		x(i,:) = snobround(x(i,:),SNOB.u',SNOB.v',SNOB.dx);
@@ -45,7 +50,6 @@ function runsoft(SNOB)
 	end
 
 	SNOB.Delta = median(abs(f - SNOB.f0));
-
 	for i = 1:SNOB.npoint
 		fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
 	end
@@ -68,7 +72,7 @@ function runsoft(SNOB)
 
 			notify(SNOB, 'DataToPlot');
 			notify(SNOB, 'DataToPrint');
-		else
+        else
 			[request,xbest,fbest] = snobfit(working_file, x_old, fm, params);
 		end
 
@@ -122,7 +126,8 @@ function runsoft(SNOB)
 				end
 				fm(:,2) = sqrt(eps);
 
-				x = SNOB.x;
+				x_old = SNOB.xVirt;
+				SNOB.fm = fm(:,1);
 			end
 		end
 

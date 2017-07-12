@@ -10,10 +10,15 @@ function runcombo(SNOB)
         SNOB.ncall0 = 0;
         change = 0;
 
-        % generate random starting points
-        x = rand(SNOB.npoint-1,SNOB.n);
-        x = x*diag(SNOB.v - SNOB.u) + ones(SNOB.npoint-1,1)*SNOB.u';
-        x = [SNOB.xstart;x];
+        % generate random starting points      
+        if isempty(SNOB.xstart)
+            x = rand(SNOB.npoint,SNOB.n);
+            x = x*diag(SNOB.v - SNOB.u) + ones(SNOB.npoint,1)*SNOB.u';
+        else
+            x = rand(SNOB.npoint-1,SNOB.n);
+            x = x*diag(SNOB.v - SNOB.u) + ones(SNOB.npoint-1,1)*SNOB.u';
+            x = [SNOB.xstart;x];
+        end
 
         % round points to snobfit grid
         for i = 1:SNOB.npoint
