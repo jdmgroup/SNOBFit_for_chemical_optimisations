@@ -106,7 +106,7 @@ function SNOB = defaults(SNOB)
 			SNOB.zMax = 180;
 			SNOB.fglob = 0;
 
-		case 'hsF_lower8'
+		case 'hsf18'
 			SNOB.linked = false;
 			SNOB.soft = true;
 			SNOB.u = [2; 0];
@@ -119,7 +119,7 @@ function SNOB = defaults(SNOB)
 			SNOB.ncall = 10000;
 			SNOB.p = 0.5;
 
-		case 'hsF_lower9'
+		case 'hsf19'
 			SNOB.linked = false;
 			SNOB.soft = true;
 			SNOB.u = [13; 0];
@@ -132,7 +132,7 @@ function SNOB = defaults(SNOB)
 			SNOB.ncall = 10000;
 			SNOB.p = 0.5;
 
-		case 'hsF_upper3'
+		case 'hsf23'
 			SNOB.linked = false;
 			SNOB.soft = true;
 			SNOB.u = [-50; -50];
