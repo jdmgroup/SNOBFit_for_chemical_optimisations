@@ -13,7 +13,15 @@ Our SNOBFit interface package includes some example objective and constraint fun
 ### SNOBFit Package Organisation
 Our SNOBFit package is organised in the following folders:
 
-![snobfit folder structure](snob_folders.png)
+```
++snobfitclass
+├── +confcn
+├── +minq5
+├── +objfcn
+├── +snobfcn
+├── @snobHandler
+└── @snobclass
+```
 
 The **@snobclass** folder contains files defining the SNOBFit class, and the functions that it uses to run an optimisation, and the **@snobHandler** folder contains functions that allow the class to handle things like plotting and saving to files. As our SNOBFit interface is a wrapper around the implementation provided by Huyer and Neumaier, it uses some of the code they wrote to call the SNOBFit algorithm. The folders **+snobfcn** and **+minq5** contain the files from their original implementation.
 
