@@ -8,7 +8,7 @@ In this folder you will find tutorials on how to install our MATLAB package, how
 In this tutorial we will explain how to configure your own optimsation.
 
 ## Defining Your Own Functions
-Our SNOBFit interface package includes some example objective and constraint functions. However, you will more than likely want to define your own optimisation targets and constraints. To do this, you will need to write them in the form of an *objective function* and a *constraint function* (which may contain multiple constraints). These need to be written in the form of MATLAB a function, and stored in the correct folder in the code files.
+Our SNOBFit interface package includes some example objective and constraint functions. However, you will more than likely want to define your own optimisation targets and constraints. To do this, you will need to write them in the form of an *objective function* and a *constraint function* (which may contain multiple constraints). These need to be written in the form of a MATLAB function, and stored in the correct folder in the code files.
 
 ### SNOBFit Package Organisation
 Our SNOBFit package is organised in the following folders:
@@ -97,7 +97,7 @@ Firstly, you will need to formulate the requirements of your chemical synthesis 
 
 For chemical processes, however, there is a disconnect between the input parameters (e.g. temperature, pressure, concentration) and the reaction outputs. Any quantifiable parameter in your system can be used to form an objective or constraint function. In practice this is usually an analytical result (e.g. a metric that relates to product yield or selectivity), however you could base your optimisation on other metrics such as economic factors (e.g. space-time yield or process cost) or environmental considerations (e.g. E-factor or atom efficiency of the proposed configuration).
 
-In our article we optimised a cascade synthesis with four competing products: X0, X1, X2, and X3. One objective for us was to minimise the amount of X3 and keep the conversion to X1 and X2 above 90 %, while producing more X2 than X1.
+In our article we optimised a cascadic synthesis with four competing products: X0, X1, X2, and X3. One objective for us was to minimise the amount of X3 and keep the conversion to X1 and X2 above 90 %, while producing more X2 than X1.
 
 We translated this into:
 
@@ -108,7 +108,7 @@ We translated this into:
 where [X] corresponded to the mole fraction of X in the sample.
 
 ### Writing Your Chemical Optimisation Files
-As discussed above, it is highly probably that you will not be evaluating your functions directly. In our case, each set of recommended points would be used as the reaction conditions for running an automated flow reactor.
+As discussed above, it is highly probable that you will not be evaluating your functions directly. In our case, each set of recommended points would be used as the reaction conditions for running an automated flow reactor.
 
 This means your objective and constraint functions may need to call other functions that you have written. For us, our objective function called another function that took a set of conditions as the argument, ran those conditions on our flow reactor, and returned the mole fractions of the product at each point:
 ```
@@ -133,11 +133,44 @@ function F = constraint(SNOB)
 
     mole_fractions = read_mole_fractions();
 
-    F(:,1) = mole_fractions(:,2) + mole_fractions(:,3);
-    F(:,2) = mole_fractions(:,2) / mole_fractions(:,3);
+    X1 = mole_fractions(:,1);
+    X2 = mole_fractions(:,2);
+
+    F(:,1) = X1 + X2;
+    F(:,2) = X1 / X2;
 
 end
 ```
 
+### Setting The Constraints
+
+You might notice that in the *constraint function* definitions above, there is nowhere for the values of the constraints to be set. The values of the constraints on your *constraint functions* need to be set after creating a SNOBFit object in MATLAB, before running the experiment.
+
+To set up your SNOBFit object for the above optimisation:
+```
+snobfit_object = snobclass()
+snobfit_object.name = 'constrained_optimisation';
+snobfit_object.fcn = 'objective';
+snobfit_object.softfcn = 'constraint';
+snobfit.soft = true;
+```
+
+The values of the constraints are then set as *upper* and *lower* limits on each of the constraint functions:
+```
+snobfit_object.F_upper = [inf; 0.5];
+snobfit_object.F_lower = [0.9; 0];
+```
+In this example:
+
+*  **F_upper** stores the *upper limits*
+*  **F_lower** stores the *lower limits*
+*  Both are **1**-by-**n** arrays, where **n** is the number of constraint functions
+*  The position of each value corresponds to the column the the constraint is output to **F** in, e.g. the constraint function **X1 / X2** is output to the *first column* in our function, so the lower limit of 0.9 is the *first value* in **F_lower**
+
+You will also need to define how soft or hard each constraint function is, using the &#963 parameter:
+```
+snobfit_object.sigma = [0.3; 0.3]
+```
+Here we have set &#963 to the same value for both constraints, but you can chose any value that seems sensible to you. One way of choosing &#963 is to define it as the maximum tolerable violation of a constraint. For our example this would mean that we could tolerate anything down to 0.6 for X1 + X2, and anything up to 0.8 for X1 / X2.
 
 #### This should be all of the information that you need to successfully run a soft constrained optimisation using our SNOBFit interface, for a chemical synthesis. :microscope: :thumbsup:
