@@ -8,10 +8,25 @@ http://www.mat.univie.ac.at/~neum/software/snobfit/
 The paper describing the SNOBFit algorithm and its implementation can be found here:
 http://www.mat.univie.ac.at/~neum/ms/snobfit.pdf
 
-Some example objective functions are provided in the +objfcn folder. To use the package on a new objective function, a function file must be created in this folder that only accepts one argument, the SNOB object, and returns evaluated values of the function.
+## Installation
+To install the package on your computer, either clone or download this repository onto your computer.
 
-Default parameters can be defined for objective functions by editing the defaults.m method in @snobclass.
+Inside the repository, the code is written as a 'package folder', in the '+snobfitclass' folder. To be able to use the package easily, **copy just the '+snobfitclass' folder into the MATLAB on your computer**.
 
-The class provides options for linking two inputs to the objective function, for instance if they are flow rates in a flow-reactor system.
+For Linux/Mac this is usually found in:
+```
+~/Documents/MATLAB
+```
+For Windows this is usually:
+```
+C:\Users\{user name}\Documents\MATLAB
+```
 
-There are also options for running the snobfit algorithm in soft or combination modes. Soft mode minimises an objective function that has soft constraints on it. These soft constraints must be provided in a function file in the +confcn folder, with the same name as the objective function. Combination mode runs normal snobfit on the constraint function, to find a point that satisfies these constraints, and then switches to soft SNOBFit to minimise the objective function. 
+This will allow you to import the contents of the package in MATLAB, by typing:
+```
+import snobfitclass.*
+```
+
+## Using the Package
+
+Some tutorials on how to use the package to run different optimisations can be found in the 'tutorials' folder. Two of these are in the form of MATLAB live scripts. If you open them in MATLAB you will be able to run the code inside of them as well as edit parts of the code to experiment with it.
