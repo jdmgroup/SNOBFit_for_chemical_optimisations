@@ -164,13 +164,75 @@ In this example:
 
 *  **F_upper** stores the *upper limits*
 *  **F_lower** stores the *lower limits*
-*  Both are **1**-by-**n** arrays, where **n** is the number of constraint functions
-*  The position of each value corresponds to the column the the constraint is output to **F** in, e.g. the constraint function **X1 / X2** is output to the *first column* in our function, so the lower limit of 0.9 is the *first value* in **F_lower**
+*  Both are **n**-by-**1** arrays, where **n** is the number of constraint functions
 
 You will also need to define how soft or hard each constraint function is, using the &#963; parameter:
 ```
 snobfit_object.sigma = [0.3; 0.3]
 ```
-Here we have set &#963; to the same value for both constraints, but you can chose any value that seems sensible to you. One way of choosing &#963; is to define it as the maximum tolerable violation of a constraint. For our example this would mean that we could tolerate anything down to 0.6 for X1 + X2, and anything up to 0.8 for X1 / X2.
+Here we have set &#963; to the same value for both constraints, but you can chose any value that seems sensible to you. One way of choosing &#963; is to define it as the maximum amount over or under the constraints that is tolerable. In our example the lower limit on the first constraint is 0.9, so a &#963; of 0.3 means anything down to 0.6 is tolerable for X1 + X2. The upper limit of the second constraint is 0.5, so a &#963; of 0.3 meanse anything up to 0.8 is tolerable for X1 / X2.
+
+### Setting the Bounds
+
+SNOBFit is a bounded optimisation algorithm, which means that it only works with limits placed on the parameters that you are varying. This makes it a good fit for chemical optimisations, which usually have limits on the ranges of reaction conditions. These may be physical limitations, for instance the boiling point of a solvent places an upper limit on the temperature of a reaction, or just the range of conditions that you think the optimum is most likely to be in.
+
+These bounds can be set by changing properties on the SNOBFit object. For an optimisation that is changing two reaction conditions, this might be:
+```
+snobfit_object.u = [5; 30];   % lower bounds
+snobfit_object.v = [30; 80];  % upper bounds
+```
+In this example:
+* The lower bounds are set with the **u** property, and the upper bounds are set with the **v** property.
+* Both of these are **n**-by-**1** arrays where **n** is the number of reaction conditions, or dimensions, you are changing in your optimisation.
+
+If you are using a flow reactor, two things that you often want to control are the overall flow rate of reagents and the ratio of those flow rates to each other. However, this links the flow rates together and forms a trapezoidal boundary for the reaction conditions. SNOBFit can only handle square boundaries, so the flow rate boundaries need to be transformed into a square before it can use them. A method for handling this has been included in the SNOBFit object. **Currently it only works for two reagent flow rates, and a third (optional) unlinked reaction condition**.
+
+To use linked reaction conditions, you need to change the property on the SNOBFit object:
+```
+snobfit_object.linked = true
+```
+You can then set the bounds for the linked reaction conditions:
+```
+snobfit_object.xyMin = 50;      % the minimum overall flow rate
+snobfit_object.xyMax = 300;     % the maximum overall flow rate
+
+snobfit_object.minRatio = 0.5;  % the minimum ratio between the flow rates
+snobfit_object.maxRatio = 2.0;  % the maximum ratio between the flow rates
+```
+The bounds on a third reaction condition can then also be set:
+```
+snobfit_object.zMin = 100;
+snobfit_object.zMax = 150;
+```
+
+### Termination Criteria
+
+The final thing that you might want to change for your own chemical optimisation is the termination criteria, or when the optimisation decides that it has finished. The options that have been incorporated into the SNOBFit object are called **'minimised'**, **'no_change'**, and **'n_runs'**. 
+
+**The default option is 'minimised'**. This means that the optimisation will end when the best objective function value is below a threshold value, or after a maximum number of objective function evaluations. You can set this threshold, and a target minimum if known:
+```
+snobfit_object.termination = 'minimised';  % termination criterion
+snobfit_object.fglob = 0;                  % target minimum, defaults to zero if not known
+snobfit_object.threshold = 0.001;          % threshold for termination
+snobfit_object.ncall = 100;                % maximum number of objective function evaluations
+```
+
+If you are running a soft constrained optimisation, there is an additional check to make sure the point(s) that satisfy the termination criterion also satisfy the constraints.
+
+Another termination criterion is 'no_change'. This ends the optimisation if there has been no change in the best objective function value for a set number of calls to the SNOBFit algorithm. There is a chance that this may terminate the optimisation too early, so you can also set a minimum number of objective function evaluations before checking for a change:
+```
+snobfit_object.termination = 'no_change'; % termination criterion
+snobfit_object.ncallNoChange = 5;         % number of SNOBFit calls without a change before terminating
+snobfit_object.minCalls = 50;             % minimum number of function evaluations before checking for a change
+```
+
+The final termination criterion included in the SNOBFit object is 'n_runs'. This terminates the optimisation after a set number of evaluations of the objective function:
+```
+snobfit_object.termination = 'n_runs'; % termination criterion
+snobfit_object.ncall = 100;            % maximum number of function evaluations
+```
+
+These termination conditions have been included in the SNOBFit object for ease of use. There may be other criteria that are more suitable to your particular use. If you want to add any conditions, you can add them to the **'+snobfitclass/@snobclass/checkTermination.m'** file.
+
 
 #### This should be all of the information that you need to successfully run a soft constrained optimisation using our SNOBFit interface, for a chemical synthesis. :microscope: :thumbsup:

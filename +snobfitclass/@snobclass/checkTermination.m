@@ -66,7 +66,7 @@ function flag = checkTermination(SNOB)
 
 			end
 		case 'n_runs'
-		% not really necessary to add this in, but its nice emphasise what it does
+		
 			if SNOB.ncall0 >= SNOB.ncall
 				flag = 1;
 			end
