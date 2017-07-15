@@ -182,8 +182,11 @@ snobfit_object.u = [5; 30];   % lower bounds
 snobfit_object.v = [30; 80];  % upper bounds
 ```
 In this example:
-* The lower bounds are set with the **u** property, and the upper bounds are set with the **v** property.
-* Both of these are **n**-by-**1** arrays where **n** is the number of reaction conditions, or dimensions, you are changing in your optimisation.
+* The lower bounds are set with the *u* property, and the upper bounds are set with the *v* property.
+* The number of lower/upper bounds you declare defines the dimensionality of the optimisation, no further setup is required (with the exception defined below where input parameters are linked together).
+* Both of these are *n*-by-*1* arrays where *n* is the number of reaction conditions, or dimensions, you are changing in your optimisation.
+* For clarity, in the above example SNOBFit is allowed to test any value between 5 and 30 for input parameter *1* and any value between 30 and 80 for parameter *2*.
+* It is important to note for your objective/constraint functions that the order that you define the bounds here correlates directly to the column in *snobfit_object.next* that the new test conditions are stored. For e.g. if parameter *2* here were reaction temperature then the next set of temperatures that SNOBFit wants to test are stored in *snobfit_object.next(:,2)*.
 
 If you are using a flow reactor, two things that you often want to control are the overall flow rate of reagents and the ratio of those flow rates to each other. However, this links the flow rates together and forms a trapezoidal boundary for the reaction conditions. SNOBFit can only handle square boundaries, so the flow rate boundaries need to be transformed into a square before it can use them. A method for handling this has been included in the SNOBFit object. **Currently it only works for two reagent flow rates, and a third (optional) unlinked reaction condition**.
 
