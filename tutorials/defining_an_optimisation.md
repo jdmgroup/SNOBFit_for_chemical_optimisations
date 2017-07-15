@@ -93,16 +93,20 @@ Note: You can only assign functions in the **+objfcn** folder to *'snobfit_objec
 The information above, as well as in the other tutorials, should be all that you need to define and run your own optimisation. However, doing so for a chemical synthesis requires a few more steps.
 
 ### Formulating the Chemical Optimisation
-Firstly, you will need to formulate the requirements of your chemical synthesis into a system of objective and constraint functions. In the previous examples we have been able to take the suggested parameters sets and directly determine the objective and constraint values using an algebraic expression.
+You will need to formulate the requirements of your chemical synthesis into a system of objective and constraint functions. In the previous examples we have been able to take the suggested parameters sets and directly determine the objective and constraint values using an algebraic expression.
 
 For chemical processes, however, there is a disconnect between the input parameters (e.g. temperature, pressure, concentration) and the reaction outputs. Any quantifiable parameter in your system can be used to form an objective or constraint function. In practice this is usually an analytical result (e.g. a metric that relates to product yield or selectivity), however you could base your optimisation on other metrics such as economic factors (e.g. space-time yield or process cost) or environmental considerations (e.g. E-factor or atom efficiency of the proposed configuration).
 
-In our article we optimised a cascadic synthesis with four competing products: X0, X1, X2, and X3. One objective for us was to minimise the amount of X3 and keep the conversion to X1 and X2 above 90 %, while producing more X2 than X1.
+In the previous examples the number of inputs parameters and their boundary conditions (upper and lower  limits) have been predefined. In your optimisation you will need to configure this. In principle you can have any number of input parameters (dimensions), however the more dimensions you add, the longer the optimisation will take to converge on optimal results. As a starting point, two or three dimensions is advisable. Whatever you decide, SNOBFit needs to know the number of input parameters and the range of values that each parameter may take. This can be defined as follows:
+
+BW TO ADD.
+
+In our article we optimised a cascadic synthesis with four competing products: X0, X1, X2, and X3. One example we reported was to minimise the amount of X3 (Objective) and keep the conversion to X1 and X2 above 90 % (Constraint 1), while achieving at least a two-fold excess of X2 relative to X1 (Constraint 2).
 
 We translated this into:
 
 * Objective: Minimise [X3]
-* Constraint 1: 0.9 < ([X1] + [X2])
+* Constraint 1: ([X1] + [X2]) > 0.9
 * Constraint 2: ([X1] / [X2]) < 0.5
 
 where [X] corresponded to the mole fraction of X in the sample.
@@ -162,15 +166,15 @@ snobfit_object.F_lower = [0.9; 0];
 ```
 In this example:
 
-*  **F_upper** stores the *upper limits*
-*  **F_lower** stores the *lower limits*
-*  Both are **1**-by-**n** arrays, where **n** is the number of constraint functions
-*  The position of each value corresponds to the column the the constraint is output to **F** in, e.g. the constraint function **X1 / X2** is output to the *first column* in our function, so the lower limit of 0.9 is the *first value* in **F_lower**
+*  *F_upper* stores the *upper limits*
+*  *F_lower* stores the *lower limits*
+*  Both are *1*-by-*n* arrays, where *n* is the number of constraint functions
+*  The position of each value corresponds to the column the the constraint is output to *F* in, e.g. the constraint function *X1 / X2* is output to the *first column* in our function, so the lower limit of 0.9 is the *first value* in *F_lower*.
 
 You will also need to define how soft or hard each constraint function is, using the &#963; parameter:
 ```
 snobfit_object.sigma = [0.3; 0.3]
 ```
-Here we have set &#963; to the same value for both constraints, but you can chose any value that seems sensible to you. One way of choosing &#963; is to define it as the maximum tolerable violation of a constraint. For our example this would mean that we could tolerate anything down to 0.6 for X1 + X2, and anything up to 0.8 for X1 / X2.
+Here we have set &#963; to the same value for both constraints, but you can chose any value that seems sensible to you. One way of choosing &#963; is to define it as the maximum tolerable violation of a constraint. For our example this would mean that we could tolerate anything down to 0.6 for X1 + X2 (*F_lower* - &#963), and anything up to 0.8 for X1 / X2 (*F_upper* + &#963).
 
 #### This should be all of the information that you need to successfully run a soft constrained optimisation using our SNOBFit interface, for a chemical synthesis. :microscope: :thumbsup:
