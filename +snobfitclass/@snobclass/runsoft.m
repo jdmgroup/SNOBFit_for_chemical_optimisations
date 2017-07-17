@@ -16,15 +16,15 @@ function runsoft(SNOB)
 
 	if isempty(SNOB.xstart)
 		x = rand(SNOB.npoint,SNOB.n);
-		x = x*diag(SNOB.v - SNOB.u) + ones(SNOB.npoint,1)*SNOB.u';
+		x = x*diag(SNOB.x_upper - SNOB.x_lower) + ones(SNOB.npoint,1)*SNOB.x_lower';
 	else
 		x = rand(SNOB.npoint-1,SNOB.n);
-		x = x*diag(SNOB.v - SNOB.u) + ones(SNOB.npoint-1,1)*SNOB.u';
+		x = x*diag(SNOB.x_upper - SNOB.x_lower) + ones(SNOB.npoint-1,1)*SNOB.x_lower';
 		x = [SNOB.xstart;x];
 	end
 
 	for i = 1:SNOB.npoint
-		x(i,:) = snobround(x(i,:),SNOB.u',SNOB.v',SNOB.dx);
+		x(i,:) = snobround(x(i,:),SNOB.x_lower',SNOB.x_upper',SNOB.dx);
 	end
 
 	x_old = x;
@@ -61,7 +61,7 @@ function runsoft(SNOB)
 	SNOB.fm = fm(:,1);
 
 	SNOB.ncall0 = SNOB.ncall0 + length(f);
-	params = struct('bounds',{SNOB.u,SNOB.v},'nreq',SNOB.nreq,'p',SNOB.p);
+	params = struct('bounds',{SNOB.x_lower,SNOB.x_upper},'nreq',SNOB.nreq,'p',SNOB.p);
 
 	while stop_condition == 0
 		if SNOB.ncall0 == SNOB.npoint

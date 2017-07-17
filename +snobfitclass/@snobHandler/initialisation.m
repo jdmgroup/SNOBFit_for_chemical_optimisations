@@ -1,22 +1,22 @@
 function initialisation(SNOB,src,event)
 
-	if size(SNOB.v,2) > size(SNOB.v,1)
-		SNOB.v = SNOB.v';
+	if size(SNOB.x_upper,2) > size(SNOB.x_upper,1)
+		SNOB.x_upper = SNOB.x_upper';
 	end
 
-	if size(SNOB.u,2) > size(SNOB.u,1)
-		SNOB.u = SNOB.u';
+	if size(SNOB.x_lower,2) > size(SNOB.x_lower,1)
+		SNOB.x_lower = SNOB.x_lower';
 	end
 
-	if ~isempty(SNOB.v) & (size(SNOB.u) == size(SNOB.v))
+	if ~isempty(SNOB.x_upper) & (size(SNOB.x_lower) == size(SNOB.x_upper))
 		if strcmp(SNOB.fcn,'none')
 			fprintf(2,'Do not forget to set the function!\n');
 		else
-			SNOB.n = length(SNOB.u);
+			SNOB.n = length(SNOB.x_lower);
 			SNOB.nreq = SNOB.n + 4;
 			SNOB.npoint = SNOB.n + 4;
 
-			SNOB.dx = (SNOB.v - SNOB.u)'*1e-3; %'
+			SNOB.dx = (SNOB.x_upper - SNOB.x_lower)'*1e-3; %'
 			SNOB.minimised = false;
 			if ~strcmp(SNOB.status,'initialised')
 				SNOB.status = 'initialised';

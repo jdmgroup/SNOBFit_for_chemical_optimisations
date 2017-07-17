@@ -13,16 +13,16 @@ function runcombo(SNOB)
         % generate random starting points      
         if isempty(SNOB.xstart)
             x = rand(SNOB.npoint,SNOB.n);
-            x = x*diag(SNOB.v - SNOB.u) + ones(SNOB.npoint,1)*SNOB.u';
+            x = x*diag(SNOB.x_upper - SNOB.x_lower) + ones(SNOB.npoint,1)*SNOB.x_lower';
         else
             x = rand(SNOB.npoint-1,SNOB.n);
-            x = x*diag(SNOB.v - SNOB.u) + ones(SNOB.npoint-1,1)*SNOB.u';
+            x = x*diag(SNOB.x_upper - SNOB.x_lower) + ones(SNOB.npoint-1,1)*SNOB.x_lower';
             x = [SNOB.xstart;x];
         end
 
         % round points to snobfit grid
         for i = 1:SNOB.npoint
-            x(i,:) = snobround(x(i,:),SNOB.u',SNOB.v',SNOB.dx);
+            x(i,:) = snobround(x(i,:),SNOB.x_lower',SNOB.x_upper',SNOB.dx);
         end
 
         x_old = x;
@@ -51,7 +51,7 @@ function runcombo(SNOB)
 
         % check if there are any valid points
         isvalid = find(sum(repmat(SNOB.F_lower',SNOB.npoint,1) <= F & F <= repmat(SNOB.F_upper',SNOB.npoint,1),2) == length(SNOB.F_lower));
-        params = struct('bounds',{SNOB.u,SNOB.v},'nreq',SNOB.nreq,'p',SNOB.p);
+        params = struct('bounds',{SNOB.x_lower,SNOB.x_upper},'nreq',SNOB.nreq,'p',SNOB.p);
 
     else
         x_old = SNOB.xVirt;
@@ -59,7 +59,7 @@ function runcombo(SNOB)
 		F = SNOB.F;
 		x = SNOB.x;
 		isvalid = find(sum(repmat(SNOB.F_lower',length(F),1) <= F & F <= repmat(SNOB.F_upper',length(F),1),2) == length(SNOB.F_lower));
-        params = struct('bounds',{SNOB.u,SNOB.v},'nreq',SNOB.nreq,'p',SNOB.p);
+        params = struct('bounds',{SNOB.x_lower,SNOB.x_upper},'nreq',SNOB.nreq,'p',SNOB.p);
         change = 0;
     end
 	% enter loop until valid points are found
