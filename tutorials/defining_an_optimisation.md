@@ -41,7 +41,7 @@ function f = hsf18(SNOB)
     x1 = SNOB.next(:,1);      % x1 is the first input parameter
     x2 = SNOB.next(:,2);      % x2 is the second input parameter
 
-    f = 0.01*x1.^2 + x2.^2;   %f is a 1D column vector containing function values at each set of input parameters (x1,x2)
+    f = 0.01*x1.^2 + x2.^2;   % f is a 1D column vector containing function values at each set of input parameters (x1,x2)
 
 end
 ```
@@ -57,7 +57,7 @@ In this example:
 
 ### Writing an Objective Function for a Constrained Optimisation
 
-For an unconstrained optimisation, your objective function must:
+For an constrained optimisation, your objective function must:
 * Take a SNOBFit object (an instance of the SNOBFit class) as its only argument
 * Return a 2D array of objective function values at each set of input parameters
 * Each row of the output array corresponds to the set of property values at a different set of reaction conditions
