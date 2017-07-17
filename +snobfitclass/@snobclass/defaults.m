@@ -325,6 +325,19 @@ function SNOB = defaults(SNOB)
 			SNOB.zMax = 150;
 			SNOB.fglob = 0;
 
+		case 'testValuePassing'
+			SNOB.linked = false;
+			SNOB.soft = true;
+			SNOB.x_lower = [2; 0];
+			SNOB.x_upper = [50; 50];
+			SNOB.F_lower = [0; 0];
+			SNOB.F_upper = [Inf; Inf];
+			SNOB.xstart = [2, 2];
+			SNOB.fglob = 5;
+			SNOB.xglob = [sqrt(250); sqrt(2.5)];
+			SNOB.ncall = 10000;
+			SNOB.p = 0.5;
+
 		case 'none'
 			disp('User must enter function and setup values!')
 			

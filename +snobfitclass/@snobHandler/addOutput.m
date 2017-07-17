@@ -10,8 +10,8 @@ function addOutput(SNOB)
 	addlistener(SNOB, 'maxRatio', 'PostSet', @(src,event)snobfitclass.snobHandler.setConstraints(SNOB,src,event));
 	addlistener(SNOB, 'zMax', 'PostSet', @(src,event)snobfitclass.snobHandler.setConstraints(SNOB,src,event));
 	addlistener(SNOB, 'zMin', 'PostSet', @(src,event)snobfitclass.snobHandler.setConstraints(SNOB,src,event));
-	addlistener(SNOB, 'u', 'PostSet', @(src,event)snobfitclass.snobHandler.initialisation(SNOB,src,event));
-	addlistener(SNOB, 'v', 'PostSet', @(src,event)snobfitclass.snobHandler.initialisation(SNOB,src,event));
+	addlistener(SNOB, 'x_lower', 'PostSet', @(src,event)snobfitclass.snobHandler.initialisation(SNOB,src,event));
+	addlistener(SNOB, 'x_upper', 'PostSet', @(src,event)snobfitclass.snobHandler.initialisation(SNOB,src,event));
 	addlistener(SNOB, 'fcn', 'PostSet', @(src,event)SNOB.defaults);
 	addlistener(SNOB, 'filepath', 'PostSet', @(src,event)snobfitclass.snobHandler.checkPath(SNOB,src,event));
 	addlistener(SNOB, 'name', 'PostSet', @(src,event)snobfitclass.snobHandler.loadPrevious(SNOB,src,event));
