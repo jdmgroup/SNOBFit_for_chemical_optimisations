@@ -119,7 +119,7 @@ As discussed above, it is highly probable that you will not be evaluating your f
 This means your objective and constraint functions may need to call other functions that you have written. The objective function needs to take the general form as shown below, where for example the objective is to minimise the first output property:
 
 ```
-function f = objective(SNOB)
+function f = my_objective_function(SNOB)
 
     input_parameter_1 = SNOB.next(:,1);
     input_parameter_2 = SNOB.next(:,2);
@@ -132,13 +132,13 @@ end
 ```
 In this example:
 * *input_parameter_1* and *input_parameter_2* represent the first and second reaction parameters, respectively
-* *run_reaction* is a function that takes the input parameters as an argument, performs sequential reactions and returns a *n*-by-*m* array of required output properties, where *n* is the number of experiments and *m* is the number of output properties
+* *run_reaction* is a function that takes the input parameters as an argument, performs **sequential reactions** and returns a *n*-by-*m* array of required output properties, where *n* is the number of experiments and *m* is the number of output properties
 * the objective function is configured to minimise output_properties(:,1)
 
 For us, our objective function called our flow reactor with set of conditions as the argument, ran those conditions, and returned the mole fractions of the product at each point:
 
 ```
-function f = objective(SNOB)
+function f = my_objective_function(SNOB)
 
     flow_rate1 = SNOB.next(:,1);
     flow_rate2 = SNOB.next(:,2);
@@ -156,7 +156,7 @@ end
 
 One small problem that you might encounter is that the constraint function is evaluated after the objective function. Therefore the constraint function will not have access to the values returned by our reactor in the objective function. To get around that, we included a *valuesToPass* property on the SNOBFit object to store any values you need to pass between functions. This can then be accessed by the constraint function:
 ```
-function F = constraint(SNOB)
+function F = my_constraint_function(SNOB)
 
     mole_fractions = SNOB.valuesToPass;
 
@@ -177,8 +177,8 @@ To set up your SNOBFit object for the above optimisation:
 ```
 snobfit_object = snobclass()
 snobfit_object.name = 'constrained_optimisation';
-snobfit_object.fcn = 'objective';
-snobfit_object.softfcn = 'constraint';
+snobfit_object.fcn = 'my_objective_function';
+snobfit_object.softfcn = 'my_constraint_function';
 snobfit.soft = true;
 ```
 
@@ -188,8 +188,8 @@ snobfit_object.F_upper = [inf; 0.5];
 snobfit_object.F_lower = [0.9; 0];
 ```
 In this example:
-*  *F_upper* stores the *upper limits*
-*  *F_lower* stores the *lower limits*
+*  *snobfit_object.F_upper* stores the *upper limits*
+*  *snobfit_object.F_lower* stores the *lower limits*
 *  Both are *1*-by-*n* arrays, where *n* is the number of constraint functions
 *  The position of each value corresponds to the column the the constraint is output to *F* in, e.g. the constraint function *X1 / X2* is output to the *first column* in our function, so the lower limit of 0.9 is the *first value* in *F_lower*.
 
@@ -214,6 +214,8 @@ In this example:
 * Both of these are *n*-by-*1* arrays where *n* is the number of reaction conditions, or dimensions, you are changing in your optimisation.
 * For clarity, in the above example SNOBFit is allowed to test any value between 5 and 25 for input parameter *1* and any value between 30 and 80 for parameter *2*.
 * It is important to note for your objective/constraint functions that the order that you define the bounds here correlates directly to the column in *snobfit_object.next* that the new test conditions are stored. For e.g. if parameter *2* here were reaction temperature then the next set of temperatures that SNOBFit wants to test are stored in *snobfit_object.next(:,2)*.
+
+#### Linked Bounds
 
 If you are using a flow reactor, two things that you often want to control are the overall flow rate of reagents and the ratio of those flow rates to each other. However, this links the flow rates together and forms a trapezoidal boundary for the reaction conditions. SNOBFit can only handle square boundaries, so the flow rate boundaries need to be transformed into a square before it can use them. A method for handling this has been included in the SNOBFit object. **Currently it only works for two reagent flow rates, and a third (optional) unlinked reaction condition**.
 
@@ -249,14 +251,14 @@ snobfit_object.ncall = 100;                % maximum number of objective functio
 
 If you are running a soft constrained optimisation, there is an additional check to make sure the point(s) that satisfy the termination criterion also satisfy the constraints.
 
-Another termination criterion is 'no_change'. This ends the optimisation if there has been no change in the best objective function value for a set number of calls to the SNOBFit algorithm. There is a chance that this may terminate the optimisation too early, so you can also set a minimum number of objective function evaluations before checking for a change:
+Another termination criterion is **'no_change'**. This ends the optimisation if there has been no change in the best objective function value for a set number of calls to the SNOBFit algorithm. There is a chance that this may terminate the optimisation too early, so you can also set a minimum number of objective function evaluations before checking for a change:
 ```
 snobfit_object.termination = 'no_change'; % termination criterion
 snobfit_object.ncallNoChange = 5;         % number of SNOBFit calls without a change before terminating
 snobfit_object.minCalls = 50;             % minimum number of function evaluations before checking for a change
 ```
 
-The final termination criterion included in the SNOBFit object is 'n_runs'. This terminates the optimisation after a set number of evaluations of the objective function:
+The final termination criterion included in the SNOBFit object is **'n_runs'**. This terminates the optimisation after a set number of evaluations of the objective function:
 ```
 snobfit_object.termination = 'n_runs'; % termination criterion
 snobfit_object.ncall = 100;            % maximum number of function evaluations
