@@ -12,8 +12,6 @@ function saveExp(SNOB)
 		mkdir(savepath);
     end
 
-    % JHB - BAZ THIS WILL LIKELY CAUSE SIMILAR ISSUES TO CHECK NAME
-    % CANT ASSUME THAT LAST FILE ISN'T ONE OF THE MAC DIR FILES
 	if SNOB.continuing
 		cont_files = dir(fullfile(savepath, SNOB.name,'_cont(*).mat')); % JHB
 		if isempty(cont_files)

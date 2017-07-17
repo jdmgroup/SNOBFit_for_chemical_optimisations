@@ -13,11 +13,11 @@ function setConstraints(SNOB,src,event)
 		[ux, vx] = snobfitclass.TrapezoidToSquare(SNOB.trapezoid);
 
 		if ~isempty(SNOB.zMin) & ~isempty(SNOB.zMax)			
-			SNOB.u = [min(ux); min(vx); SNOB.zMin];
-			SNOB.v = [max(ux); max(vx); SNOB.zMax];
+			SNOB.x_lower = [min(ux); min(vx); SNOB.zMin];
+			SNOB.x_upper = [max(ux); max(vx); SNOB.zMax];
 		else
-			SNOB.u = [min(ux); min(vx)];
-			SNOB.v = [max(ux); max(vx)];
+			SNOB.x_lower = [min(ux); min(vx)];
+			SNOB.x_upper = [max(ux); max(vx)];
 		end
 	end
 end

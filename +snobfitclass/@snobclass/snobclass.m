@@ -1,19 +1,17 @@
 classdef snobclass < handle
 
 	properties (Hidden = true, SetAccess = private)
-		fglob = 0;		% Expected global minimum of f
-		xglob;		% Expected global minimisers
-		uncert;		% Uncertainty in f
-		xsoft;		% coordinates that satisfy soft condition and give best f
-		fsoft;      % soft merit value at best feasible point
-		next;		% next points to investigate
-		created;	% date and time the experiment was created
+		uncert;			% Uncertainty in f
+		xsoft;			% coordinates that satisfy soft condition and give best f
+		fsoft;      	% soft merit value at best feasible point
+		next;			% next points to investigate
+		created;	    % date and time the experiment was created
 		softstart = 0;	% number of calls after which soft method started (only applies to combo)
-		f0 = Inf;
-		Delta = Inf;
+		f0 = Inf;		% initial feasible value for soft merit function
+		Delta = Inf;	% scaling parameter for soft merit function
 	end
 
-	properties (Hidden= true,SetObservable, AbortSet)
+	properties (Hidden = true, SetObservable, AbortSet)
 		filepath;	% path to directory to save into
 		xyMax;
 		xyMin;
@@ -21,11 +19,13 @@ classdef snobclass < handle
 		minRatio;
 		zMax;
 		zMin;
-		u;			% Lower Bounds of experiment parameters
-		v;			% Upper Bounds of experiment parameters
+		x_lower;	% Lower Bounds of experiment parameters
+		x_upper;	% Upper Bounds of experiment parameters
+		fglob = 0;	% Expected global minimum of f
+		xglob;		% Expected global minimisers
 	end
 
-	properties (Hidden = true)%, SetAccess = ?snobfitclass.snobHandler)
+	properties (Hidden = true, SetAccess = ?snobfitclass.snobHandler)
 		x;			% Points investigated
 		f;			% Value of fcn at points investigated
 		F;			% Value of soft fcn at points investigated
@@ -39,26 +39,27 @@ classdef snobclass < handle
 
 	properties (Hidden = true)
 		file = 'oxcba3D';	% Working file for snobfit minimisation
-		nreq;		% Number of points requested from snobfit
+		nreq;				% Number of points requested from snobfit
 		p;
-		npoint;		% Number of starting points
+		npoint;				% Number of starting points
 		threshold = 1e-3;	% threshold for terminating minimisation
-		xstart;		% User defined starting point
+		xstart;				% User defined starting point
 		F_lower;			% Lower Bounds for soft constraint function
 		F_upper;			% Upper Bounds for soft constraint function
-		sigma;		% slope for soft merit function
-		fbestHistory; % history of fbest for each call to snobfit
-		ncallNoChange = 5; % number of same function values before terminating
-		minCalls;	% minimum number of calls before terminating
-		repeatBest = true; % option to repeat the measurement at fbest
-		plot_delay = 0; % how long to pause between snobfit calls, for plotting
+		sigma;				% slope for soft merit function
+		fbestHistory; 		% history of fbest for each call to snobfit
+		ncallNoChange = 5; 	% number of same function values before terminating
+		minCalls;			% minimum number of calls before terminating
+		repeatBest = false;	% option to repeat the measurement at fbest
+		plot_delay = 0;		% how long to pause between snobfit calls, for plotting
+		valuesToPass; 		% convenience property for passing values between objective and constraints
 	end
 
 	properties (SetObservable, AbortSet)
-		name;		% Experiment name
-		fcn;		% Target function for minimisation
-		softfcn;	% Soft constraint function
-		linked = false;	% User-defined constraints, x and y linked
+		name;				% Experiment name
+		fcn;				% Target function for minimisation
+		softfcn;			% Soft constraint function
+		linked = false;		% User-defined constraints, x and y linked
 		soft = false;		% Using soft snobfit or not
 		continuing = false;	% If this is continuing an old file or not
 		combo = false;		% if it is using a combination of soft and hard snobfit
@@ -70,10 +71,10 @@ classdef snobclass < handle
 	end
 
 	properties
-		fbest;		% Lowest value of f so far
-		xbest;		% Coordinates of lowest value so far
+		fbest;			% Lowest value of f so far
+		xbest;			% Coordinates of lowest value so far
 		ncall = 100;	% Limit of calls to snobfit
-		termination = 'minimised' %
+		termination = 'minimised' % termination criteria --> 'minimised', 'no_change', 'n_runs' 
 	end
 
 	events

@@ -155,6 +155,7 @@ function f = objective(SNOB)
     temperature = SNOB.next(:,3);
 
     mole_fractions = run_reactor(flow_rate1, flow_rate2, temperature);
+    SNOB.valuesToPass = mole_fractions;
 
     X3 = mole_fractions(:,4);   % mole fraction of X3
 
@@ -163,11 +164,11 @@ function f = objective(SNOB)
 end
 ```
 
-One small problem that you might encounter is that the constraint function is evaluated after the objective function. Therefore the constraint function will not have access to the values returned by our reactor in the objective function. To get around that, we made our reactor save the mole fractions to a file each time it ran, and had our constraint function read those files:
+One small problem that you might encounter is that the constraint function is evaluated after the objective function. Therefore the constraint function will not have access to the values returned by our reactor in the objective function. To get around that, we included a *valuesToPass* property on the SNOBFit object to store any values you need to pass between functions. This can then be accessed by the constraint function:
 ```
 function F = constraint(SNOB)
 
-    mole_fractions = read_mole_fractions();
+    mole_fractions = SNOB.valuesToPass;
 
     X1 = mole_fractions(:,1);
     X2 = mole_fractions(:,2);
@@ -214,11 +215,11 @@ SNOBFit is a bounded optimisation algorithm, which means that it only works with
 
 These bounds can be set by changing properties on the SNOBFit object. For an optimisation that is changing two reaction conditions, this might be:
 ```
-snobfit_object.u = [5; 30];   % lower bounds
-snobfit_object.v = [25; 80];  % upper bounds
+snobfit_object.x_lower = [5; 30];   % lower bounds
+snobfit_object.x_upper = [25; 80];  % upper bounds
 ```
 In this example:
-* The lower bounds are set with the *u* property, and the upper bounds are set with the *v* property.
+* The lower bounds are set with the *x_lower* property, and the upper bounds are set with the *x_upper* property.
 * The number of lower/upper bounds you declare defines the dimensionality of the optimisation, no further setup is required (with the exception defined below where input parameters are linked together).
 * Both of these are *n*-by-*1* arrays where *n* is the number of reaction conditions, or dimensions, you are changing in your optimisation.
 * For clarity, in the above example SNOBFit is allowed to test any value between 5 and 25 for input parameter *1* and any value between 30 and 80 for parameter *2*.

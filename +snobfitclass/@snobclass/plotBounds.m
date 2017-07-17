@@ -43,40 +43,40 @@ function plotBounds(SNOB)
 
 		if SNOB.n >= 3
 
-			line([SNOB.u(1), SNOB.v(1)],[SNOB.u(2), SNOB.u(2)],[SNOB.u(3), SNOB.u(3)],'LineStyle',':','Color','k');
-			line([SNOB.u(1), SNOB.u(1)],[SNOB.u(2), SNOB.v(2)],[SNOB.u(3), SNOB.u(3)],'LineStyle',':','Color','k');
-			line([SNOB.v(1), SNOB.v(1)],[SNOB.u(2), SNOB.v(2)],[SNOB.u(3), SNOB.u(3)],'LineStyle',':','Color','k');
-			line([SNOB.u(1), SNOB.v(1)],[SNOB.v(2), SNOB.v(2)],[SNOB.u(3), SNOB.u(3)],'LineStyle',':','Color','k');
+			line([SNOB.x_lower(1), SNOB.x_upper(1)],[SNOB.x_lower(2), SNOB.x_lower(2)],[SNOB.x_lower(3), SNOB.x_lower(3)],'LineStyle',':','Color','k');
+			line([SNOB.x_lower(1), SNOB.x_lower(1)],[SNOB.x_lower(2), SNOB.x_upper(2)],[SNOB.x_lower(3), SNOB.x_lower(3)],'LineStyle',':','Color','k');
+			line([SNOB.x_upper(1), SNOB.x_upper(1)],[SNOB.x_lower(2), SNOB.x_upper(2)],[SNOB.x_lower(3), SNOB.x_lower(3)],'LineStyle',':','Color','k');
+			line([SNOB.x_lower(1), SNOB.x_upper(1)],[SNOB.x_upper(2), SNOB.x_upper(2)],[SNOB.x_lower(3), SNOB.x_lower(3)],'LineStyle',':','Color','k');
 
-			line([SNOB.u(1), SNOB.u(1)],[SNOB.u(2), SNOB.u(2)],[SNOB.u(3), SNOB.v(3)],'LineStyle',':','Color','k');
-			line([SNOB.u(1), SNOB.u(1)],[SNOB.v(2), SNOB.v(2)],[SNOB.u(3), SNOB.v(3)],'LineStyle',':','Color','k');
-			line([SNOB.v(1), SNOB.v(1)],[SNOB.u(2), SNOB.u(2)],[SNOB.u(3), SNOB.v(3)],'LineStyle',':','Color','k');
-			line([SNOB.v(1), SNOB.v(1)],[SNOB.v(2), SNOB.v(2)],[SNOB.u(3), SNOB.v(3)],'LineStyle',':','Color','k');
+			line([SNOB.x_lower(1), SNOB.x_lower(1)],[SNOB.x_lower(2), SNOB.x_lower(2)],[SNOB.x_lower(3), SNOB.x_upper(3)],'LineStyle',':','Color','k');
+			line([SNOB.x_lower(1), SNOB.x_lower(1)],[SNOB.x_upper(2), SNOB.x_upper(2)],[SNOB.x_lower(3), SNOB.x_upper(3)],'LineStyle',':','Color','k');
+			line([SNOB.x_upper(1), SNOB.x_upper(1)],[SNOB.x_lower(2), SNOB.x_lower(2)],[SNOB.x_lower(3), SNOB.x_upper(3)],'LineStyle',':','Color','k');
+			line([SNOB.x_upper(1), SNOB.x_upper(1)],[SNOB.x_upper(2), SNOB.x_upper(2)],[SNOB.x_lower(3), SNOB.x_upper(3)],'LineStyle',':','Color','k');
 
-			line([SNOB.u(1), SNOB.v(1)],[SNOB.u(2), SNOB.u(2)],[SNOB.v(3), SNOB.v(3)],'LineStyle',':','Color','k');
-			line([SNOB.u(1), SNOB.u(1)],[SNOB.u(2), SNOB.v(2)],[SNOB.v(3), SNOB.v(3)],'LineStyle',':','Color','k');
-			line([SNOB.v(1), SNOB.v(1)],[SNOB.u(2), SNOB.v(2)],[SNOB.v(3), SNOB.v(3)],'LineStyle',':','Color','k');
-			line([SNOB.u(1), SNOB.v(1)],[SNOB.v(2), SNOB.v(2)],[SNOB.v(3), SNOB.v(3)],'LineStyle',':','Color','k');
+			line([SNOB.x_lower(1), SNOB.x_upper(1)],[SNOB.x_lower(2), SNOB.x_lower(2)],[SNOB.x_upper(3), SNOB.x_upper(3)],'LineStyle',':','Color','k');
+			line([SNOB.x_lower(1), SNOB.x_lower(1)],[SNOB.x_lower(2), SNOB.x_upper(2)],[SNOB.x_upper(3), SNOB.x_upper(3)],'LineStyle',':','Color','k');
+			line([SNOB.x_upper(1), SNOB.x_upper(1)],[SNOB.x_lower(2), SNOB.x_upper(2)],[SNOB.x_upper(3), SNOB.x_upper(3)],'LineStyle',':','Color','k');
+			line([SNOB.x_lower(1), SNOB.x_upper(1)],[SNOB.x_upper(2), SNOB.x_upper(2)],[SNOB.x_upper(3), SNOB.x_upper(3)],'LineStyle',':','Color','k');
 
 			xlabel('x1')
 			ylabel('x2')
 			zlabel('x3')
 
-			axis([SNOB.u(1)-0.5 SNOB.v(1)+0.5 SNOB.u(2)-0.5 SNOB.v(2)+0.5 SNOB.u(3)-0.5 SNOB.v(3)+0.5])
+			axis([SNOB.x_lower(1)-0.5 SNOB.x_upper(1)+0.5 SNOB.x_lower(2)-0.5 SNOB.x_upper(2)+0.5 SNOB.x_lower(3)-0.5 SNOB.x_upper(3)+0.5])
 
 			if SNOB.n > 3
 				warning('too many dimensions: only plotted first 3')
 			end
 		else
-			line([SNOB.u(1), SNOB.v(1)],[SNOB.u(2), SNOB.u(2)],'LineStyle',':','Color','k');
-			line([SNOB.u(1), SNOB.u(1)],[SNOB.u(2), SNOB.v(2)],'LineStyle',':','Color','k');
-			line([SNOB.v(1), SNOB.v(1)],[SNOB.u(2), SNOB.v(2)],'LineStyle',':','Color','k');
-			line([SNOB.u(1), SNOB.v(1)],[SNOB.v(2), SNOB.v(2)],'LineStyle',':','Color','k');
+			line([SNOB.x_lower(1), SNOB.x_upper(1)],[SNOB.x_lower(2), SNOB.x_lower(2)],'LineStyle',':','Color','k');
+			line([SNOB.x_lower(1), SNOB.x_lower(1)],[SNOB.x_lower(2), SNOB.x_upper(2)],'LineStyle',':','Color','k');
+			line([SNOB.x_upper(1), SNOB.x_upper(1)],[SNOB.x_lower(2), SNOB.x_upper(2)],'LineStyle',':','Color','k');
+			line([SNOB.x_lower(1), SNOB.x_upper(1)],[SNOB.x_upper(2), SNOB.x_upper(2)],'LineStyle',':','Color','k');
 
 			xlabel('x1')
 			ylabel('x2')
 
-			axis([SNOB.u(1)-0.5 SNOB.v(1)+0.5 SNOB.u(2)-0.5 SNOB.v(2)+0.5])
+			axis([SNOB.x_lower(1)-0.5 SNOB.x_upper(1)+0.5 SNOB.x_lower(2)-0.5 SNOB.x_upper(2)+0.5])
 		end
 	end
 

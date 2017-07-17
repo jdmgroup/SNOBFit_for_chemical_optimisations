@@ -12,6 +12,16 @@ function startExp(SNOB)
 		SNOB.name = 'untitled';
 	end
 
+	if SNOB.soft | SNOB.combo
+		if strcmp(SNOB.softfcn, 'none')
+			error('You must set a constraint function for constrained optimisations')
+		elseif isempty(SNOB.F_lower) | isempty(SNOB.F_upper)
+			error('You have not set the upper and lower limits of your constraints')
+		elseif isempty(SNOB.sigma)
+			error('You have not set the value for sigma')
+		end
+	end
+
 	notify(SNOB, 'StartingExp');
 	
 	if SNOB.soft & ~SNOB.combo

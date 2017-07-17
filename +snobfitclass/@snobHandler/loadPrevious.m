@@ -22,8 +22,8 @@ function loadPrevious(SNOB,src,event)
 					if isempty(SNOB.x)
 						SNOB.x = old_snob.x;
 						SNOB.f = old_snob.f;
-						SNOB.u = old_snob.u;
-						SNOB.v = old_snob.v;
+						SNOB.x_lower = old_SNOB.x_lower;
+						SNOB.x_upper = old_SNOB.x_upper;
 						SNOB.xVirt = old_snob.x;
 
 						% set ncall default
@@ -58,8 +58,8 @@ function loadPrevious(SNOB,src,event)
 							SNOB.minRatio = old_snob.SNOB.minRatio;
 							SNOB.maxRatio = old_snob.SNOB.maxRatio;
 						else
-							SNOB.u = old_snob.SNOB.u;
-							SNOB.v = old_snob.SNOB.v;
+							SNOB.x_lower = old_snob.SNOB.x_lower;
+							SNOB.x_upper = old_snob.SNOB.x_upper;
 						end
 
 						SNOB.soft = old_snob.SNOB.soft;
