@@ -110,7 +110,27 @@ where [X] corresponded to the mole fraction of X in the sample.
 ### Writing Your Chemical Optimisation Files
 As discussed above, it is highly probable that you will not be evaluating your functions directly. In our case, each set of recommended points would be used as the reaction conditions for running an automated flow reactor.
 
-This means your objective and constraint functions may need to call other functions that you have written. For us, our objective function called another function that took a set of conditions as the argument, ran those conditions on our flow reactor, and returned the mole fractions of the product at each point:
+This means your objective and constraint functions may need to call other functions that you have written. The objective function needs to take the general form as shown below, where for example the objective is to minimise the first output property:
+
+```
+function f = objective(SNOB)
+
+    input_parameter_1 = SNOB.next(:,1);
+    input_parameter_2 = SNOB.next(:,2);
+
+    output_properties = run_reaction(input_parameter_1, input_parameter_2);
+    
+    f = output_properties(:,1); 
+
+end
+```
+In this example:
+* *input_parameter_1* and *input_parameter_2* represent the first and second reaction parameters, respectively
+* *run_reaction* is a function that takes the input parameters as an argument, performs sequential reactions and returns a *n*-by-*m* array of required output properties, where *n* is the number of experiments and *m* is the number of output properties
+* the objective function is configured to minimise output_properties(:,1)
+
+For us, our objective function called our flow reactor with set of conditions as the argument, ran those conditions, and returned the mole fractions of the product at each point:
+
 ```
 function f = objective(SNOB)
 
