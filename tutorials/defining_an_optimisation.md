@@ -54,16 +54,6 @@ In this example:
 * There is a single output property *f* that we wish to minimise
 * The objective function returns a 1D column vector *f*, in which each element corresponds to the value of f at a different set of input parameter values
 
-
-### Writing an Objective Function for a Constrained Optimisation
-
-For an constrained optimisation, your objective function must:
-* Take a SNOBFit object (an instance of the SNOBFit class) as its only argument
-* Return a 2D array of objective function values at each set of input parameters
-* Each row of the output array corresponds to the set of property values at a different set of reaction conditions
-* Each column of the output array corresponds to a separate property
-* The first column of the output array should be 
-
 ### Writing a Constraint Function
 
 Your constraint function must also be written in a specific format:
