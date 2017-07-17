@@ -8,7 +8,7 @@ For convenience, we have developed a MATLAB class-based wrapper for SNOBFit [imp
 In this folder you will find tutorials explaining how to install our MATLAB package, how to run a standard (unconstrained) optimisation with SNOBFit, and how to run a constrained optimisation.
 
 ## Defining Your Own Functions
-Our SNOBFit interface package includes some example objective and constraint functions that are commonly used for benchmarking the performance of optimisation routines. You should first familiarise yourself with running these example functions by following the instructions in XXX. The remainder of this document describes the procedure for defining your own objective and constraint functions.
+Our SNOBFit interface package includes some example objective and constraint functions that are commonly used for benchmarking the performance of optimisation routines. You should first familiarise yourself with running these example functions by following the instructions in *using_snobfit.mlx*. The remainder of this document describes the procedure for defining your own objective and constraint functions.
 
 ### SNOBFit Package Organisation
 Our SNOBFit package is organised in the following folders:
@@ -27,7 +27,7 @@ The **@snobclass** folder contains files defining the SNOBFit class, and the fun
 
 The important folders for defining your own custom optimisation are **+objfcn** and **+confcn**. All of the *objective function* definitions are stored in **+objfcn** and all of the *constraint function* definitions are stored in **+confcn**. Once you have written your function definitions (following the procedure described below), you will need to save them to the appropriate folders.
 
-### Writing an Objective Function for an unconstrained optimisation
+### Writing an Objective Function for an Unconstrained Optimisation
 
 For an unconstrained optimisation, your objective function must:
 * Take a SNOBFit object (an instance of the SNOBFit class) as its only argument
@@ -55,9 +55,9 @@ In this example:
 * The objective function returns a 1D column vector *f*, in which each element corresponds to the value of f at a different set of input parameter values
 
 
-### Writing an Objective Function for a constrained optimisation
+### Writing an Objective Function for a Constrained Optimisation
 
-For a unconstrained optimisation, your objective function must:
+For an unconstrained optimisation, your objective function must:
 * Take a SNOBFit object (an instance of the SNOBFit class) as its only argument
 * Return a 2D array of objective function values at each set of input parameters
 * Each row of the output array corresponds to the set of property values at a different set of reaction conditions
@@ -103,7 +103,7 @@ snobfit_object.softfcn = 'hsf18'  % constraint function
 ```
 Note: You can only assign functions in the **+objfcn** folder to *'snobfit_object.fcn'*, and similarly you can only assign functions in **+confcn** to *'snobfit_object.softfcn'* . If you do not define the constraint function, then SNOBFit will carry out an unconstrained optimisation.
 
-To run the optimisation, you should follow the steps described in XXX.
+To run the optimisation, you should follow the steps described in *using_soft_snobfit.mlx*.
 
 ## Defining a Chemical Optimisation
 The information above, as well as in the other tutorials, should be all that you need to define and run your own optimisation. However, doing so for a chemical synthesis requires a few more steps.
