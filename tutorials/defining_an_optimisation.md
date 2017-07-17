@@ -170,7 +170,7 @@ You will also need to define how soft or hard each constraint function is, using
 ```
 snobfit_object.sigma = [0.3; 0.3]
 ```
-Here we have set &#963; to the same value for both constraints, but you can chose any value that seems sensible to you. One way of choosing &#963; is to define it as the maximum tolerable violation of a constraint. For our example this would mean that we could tolerate anything down to 0.6 for X1 + X2 (*F_lower* - &#963), and anything up to 0.8 for X1 / X2 (*F_upper* + &#963).
+Here we have set &#963; to the same value for both constraints, but you can chose any value that seems sensible to you. One way of choosing &#963; is to define it as the maximum tolerable violation of a constraint. For our example this would mean that we could tolerate anything down to 0.6 for X1 + X2 (*F_lower* - &#963;), and anything up to 0.8 for X1 / X2 (*F_upper* + &#963;).
 
 ### Setting the Bounds
 
