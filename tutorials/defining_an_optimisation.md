@@ -44,7 +44,7 @@ end
 ```
 In this example:
 * SNOB is the SNOBFit object
-* Each set of input parameter values to be tested is stored as a separate row in the SNOB.next 2D array
+* Each row of the 2D array SNOB.next represents a set of input parameter values to be tested
 * Each column of SNOB.next represents a separate input parameter
 * Since we are carrying out a 2D optimisation SNOB.next has two columns, one for each input parameter
 * For clarity, the input parameters have been unpacked from SNOB.next and assigned to *x1* and *x2*
@@ -73,10 +73,9 @@ In this example:
 * There are two constraints
 * SNOB is the SNOBFit object
 * The two input parameters have again been unpacked from SNOB.next as x1 and x2
-* Each constraint is evaluated and stored as a separate column in a 2D-array, *F*
+* Each constraint is evaluated and stored as a separate column in the 2D-array *F*
 
 ### Naming Your Function Files
-When you save your objective and constraint function definitions to the appropriate place you must give the files a name.
 
 **The objective function and the constraint function should be given the same name, but should be saved to different directories**. For example, both functions above should be saved as **hsf18.m**.
 
@@ -92,26 +91,21 @@ Note: You can only assign functions in the **+objfcn** folder to *'snobfit_objec
 To run the optimisation, you should follow the steps described in *using_soft_snobfit.mlx*.
 
 ## Defining a Chemical (or Blackbox) Optimisation
-The instructions provided above include all of the information needed to define a mathematical optimisation problem, in which the objective function and constraint functions are known algebraic functions of the input parameters. Chemical optimisation is an example of blackbox optimisation, in which we do not know the functional dependence of the output properties on the input paramaters, and we must therefore carry out an experiment to determine the output properties for a given set of input paramaters. Blackbox optimisation is handled in a slightly different manner to the above procedure.
+The instructions provided above include all of the information needed to define a mathematical optimisation problem, in which the objective function and constraint functions are known algebraic functions of the input parameters. Chemical optimisation is an example of blackbox optimisation, in which we do not know the functional dependence of the output properties on the input paramaters, and we must therefore carry out an experiment to determine the output properties for a given set of input parameters. Blackbox optimisation is handled in a slightly different manner to mathematical optimisation as described below.
 
 ### Formulating the Chemical Optimisation
-Most chemical optimisations are examples of multiobjective optimisation problems, in which we wish to find an acceptable compromise between  several criteria, e.g. yield, side-product concentration. As described in our article '*Tuning Reaction Products by Constrained Optimisation*', this may be conveniently achieved by framing the problem as a constrained optimisation, in which we optimise a lead property subject to constraints being placed on the values that the other properties may attain. For instance, in the above case of yield and side-product concentration, we might set yield as our lead property (that we wish to maximise) while asserting that the concentration of certain unwanted side products should not exceed specified values. The lead property is handled by the objective function, while the other properties are handled by the constraint function.
+Most chemical optimisations are examples of multiobjective optimisation problems, in which we wish to find an acceptable compromise between  several criteria, e.g. yield and side-product concentration. As described in our article '*Tuning Reaction Products by Constrained Optimisation*', this may be conveniently achieved by framing the problem as a constrained optimisation, in which we optimise a lead property subject to constraints being placed on the values that the other properties may attain. For instance, in the above case of yield and side-product concentration, we might set yield as our lead property (that we wish to maximise) while asserting that the concentration of certain unwanted side products should not exceed specified values. The lead property is handled by the objective function, while the other properties are handled by the constraint function.
 
-To achieve this, you must write an experimental objective function that accepts the input parameters (i.e. reaction conditions such as (e.g. temperature, pressure, concentration) of the problem as its arguments. This objective function will launch an experiment under the specified conditions, and then return scalar values for the properties of interest. Typical properties might include 
+To achieve this, you must write an experimental objective function that accepts the input parameters (i.e. reaction conditions such as temperature, pressure, flow rates) of the problem as its arguments. This experimental objective function will launch a series of experiments using the conditions specified in SNOB.next, and then return a 1D column vector containing the values of the lead property for each set of reaction conditions tested. In running the experiment you should also determine the values of the secondary properties. These are stored as a *n*-by-*m* array in SNOB.valuesToPass, where *n* is the number of experiments and *m* is the number of output properties. 
 
-You will need to formulate the requirements of your chemical synthesis into a system of objective and constraint functions. In the previous examples we have been able to take the suggested parameters sets and directly determine the objective and constraint values using an algebraic expression.
-
-For chemical processes, however, there is a disconnect between the input parameters (e.g. temperature, pressure, concentration) and the reaction outputs. Any quantifiable parameter in your system can be used to form an objective or constraint function. In practice this is usually an analytical result (e.g. a metric that relates to product yield or selectivity), however you could base your optimisation on other metrics such as economic factors (e.g. space-time yield or process cost) or environmental considerations (e.g. E-factor or atom efficiency of the proposed configuration).
-
-In our article we optimised a cascadic synthesis with four competing products: X0, X1, X2, and X3. One example we reported was to minimise the amount of X3 (Objective) and keep the conversion to X1 and X2 above 90 % (Constraint 1), while achieving at least a two-fold excess of X2 relative to X1 (Constraint 2).
+In our article we optimised a cascadic synthesis with four competing products: X0, X1, X2, and X3. For instance, Run X involved minimising [X3] (Our Lead Property), while setting a minimum value of 90 % for [X12] = [X1] + [X2] (Our First Constrained Property) and a minimum value of 2 for the ratio R = [X2]/[X1] (Our Second Constrained Property) where [X] signfies the mole fraction of X in the sample.
 
 We translated this into:
 
-* Objective: Minimise [X3]
-* Constraint 1: ([X1] + [X2]) > 0.9
-* Constraint 2: ([X1] / [X2]) < 0.5
-
-where [X] corresponded to the mole fraction of X in the sample.
+* Minimise [X3]
+subject to
+* [X12] > 0.9
+* R < 0.5
 
 ### Writing Your Chemical Optimisation Files
 As discussed above, it is highly probable that you will not be evaluating your functions directly. In our case, each set of recommended points would be used as the reaction conditions for running an automated flow reactor.
