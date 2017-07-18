@@ -29,7 +29,7 @@ The important folders for defining your own custom optimisation are **+objfcn** 
 
 Your objective function must:
 * Take a SNOBFit object (an instance of the SNOBFit class) as its only argument
-* Return a 1D array of objective function values at each set of input parameters, where each cell of the output array corresponds to the function value at a different set of input parameters
+* Return a 1D array of objective function values at each set of input parameters, where each cell of the output array corresponds to the function value at the input parameters specified in the corresponding row of SNOB.next.
 
 An example objective function from the SNOBFit package is the *hsf18* 2D surface in **+objfcn**:
 ```
@@ -73,11 +73,11 @@ In this example:
 * There are two constraints
 * SNOB is the SNOBFit object
 * The two input parameters have again been unpacked from SNOB.next as x1 and x2
-* Each constraint is evaluated and stored as a separate column in the 2D-array *F*
+* Each constraint is evaluated and stored as a separate column of the 2D-array *F*
 
 ### Naming Your Function Files
 
-**The file name of your objective or constraint function must be given the same name as the function**. For example, both functions above should be saved as **hsf18.m**.
+**Your objective and constraint functions should be given the same name**. For example, both functions above should be saved as **hsf18.m**.
 
 You must save *objective* functions in the **+objfcn** folder and *constraint* functions in the **+confcn** folder. In this way, the function and file names for a pair of objective and constraint functions may be the same without causing any conflicts.
 
@@ -91,13 +91,13 @@ Note: You can only assign functions in the **+objfcn** folder to *'snobfit_objec
 To run the optimisation, you should follow the steps described in *using_soft_snobfit.mlx*.
 
 ## Defining a Chemical (or Blackbox) Optimisation
-The instructions provided above include all of the information needed to define a mathematical optimisation problem, in which the objective function and constraint functions are known algebraic functions of the input parameters. Chemical optimisation is an example of blackbox optimisation, in which we do not know the functional dependence of the output properties on the input parameters, and we must therefore carry out an experiment to determine the output properties for a given set of input parameters. Blackbox optimisation is handled in a slightly different manner to mathematical optimisation as described below.
+The instructions provided above include all of the information needed to define a mathematical optimisation problem, in which the objective function and constraint functions are known algebraic functions of the input parameters. Chemical optimisation is an example of blackbox optimisation, in which we do not know the functional dependence of the output properties on the input parameters, and so we must carry out an experiment to determine the output properties for a given set of input parameters. Blackbox optimisation is handled in a slightly different manner to mathematical optimisation as described below.
 
 ### Formulating the Chemical Optimisation
 Most chemical optimisations are examples of multiobjective optimisation problems, in which we wish to find an acceptable compromise between  several criteria, e.g. maximising the yield of a target molecule while minimising the formation of certain unwanted side products. As described in our article '*Tuning Reaction Products by Constrained Optimisation*', this may be conveniently achieved by framing the problem as a constrained optimisation, in which we optimise a lead property subject to constraints being placed on the values that the other properties may attain. For instance, we might set the yield of our target molecule as our lead property (that we wish to maximise) while asserting that the concentration of certain unwanted side products should not exceed specified values. The lead property is handled by the objective function, while the other properties are handled by the constraint function.
 
 ### Writing Your Chemical Optimisation Files
-Your experimental objective function should take the general form shown below, where run_reaction() is a function that launches a sequence of reactions at the conditions specified in SNOB.next and returns an array containing all relevant property values at each set of reaction conditions. The property values are stored as a *n*-by-*m* array in SNOB.valuesToPass, where *n* is the number of experiments and *m* is the number of output properties. Here we have assumed that values for the lead property are stored in the first column of output_properties. Hence, the objective function returns the first column of output_properties when called.
+Your experimental objective function should take the general form shown below, where *run_reaction* is a function that controls your experimental equipment and launches a sequence of reactions at the conditions specified in SNOB.next. *run_reaction* should return an array containing the values of all relevant properties at each set of reaction conditions. The property values can be stored as a *n*-by-*m* array in SNOB.valuesToPass, where *n* is the number of experiments and *m* is the number of output properties. In the code below we have assumed that values for the lead property are stored in the first column of output_properties. Hence, the objective function returns the first column of output_properties when called.
 
 ```
 function f = my_objective_function(SNOB)
@@ -115,19 +115,18 @@ end
 In this example:
 * *input_parameter_1* and *input_parameter_2* represent the first and second reaction parameters, respectively
 * *run_reaction* is a function that takes the input parameters as an argument, performs **sequential reactions** and returns a *n*-by-*m* array of required output properties, where *n* is the number of experiments and *m* is the number of output properties
-* the output property values are stored in SNOB.valuesToPass, allowing them to be retrieved by the constraint function
-* the objective function is configured to minimise output_properties(:,1)
+* the output property values are stored in SNOB.valuesToPass, allowing them to be subsequently retrieved by the constraint function
+* the objective function as written above is configured to minimise output_properties(:,1)
 
-In our article we optimised a cascadic synthesis with four competing products: X0, X1, X2, and X3. For instance, Run X involved minimising [X3] (our lead property), while setting a minimum value of 90 % for [X1+X2] = [X1] + [X2] (our first constrained property) and a minimum value of 2 for the ratio R = [X2]/[X1] (our second constrained property) where [X] signifies the mole fraction of X in the sample.
+In '*Tuning Reaction Products by Constrained Optimisation*' we optimised a cascadic synthesis with four competing products: X0, X1, X2, and X3. For instance, Run X involved minimising [X3] (our lead property), while setting a minimum value of 90 % for [X1+X2] = [X1] + [X2] (our first constrained property) and a minimum value of 2 for the ratio R = [X2]/[X1] (our second constrained property) where [X] signifies the mole fraction of X in the sample.
 
-This may be summarised as:
+This problem may be summarised as:
 
-* Minimise [X3]
-subject to
+* Minimise [X3] subject to:
 * [X1+X2] > 0.9
 * R < 0.5
 
-For the specific case of Run X our objective function had the following form, where run_reactor() accepts as its inputs the flow rates of the two reagents plus the temperature, and returns as its output a four column array containing [X0],[X1],[X2] and [X3] in columns one to four, respectively:
+For the specific case of Run X our objective function had the following form, where *run_reaction* was a function that accepted as its inputs the flow rates of the two reagents plus the temperature, and returned as its output a four column array containing [X0],[X1],[X2] and [X3] in columns one to four, respectively:
 
 ```
 function f = my_objective_function(SNOB)
@@ -147,7 +146,7 @@ function f = my_objective_function(SNOB)
 end
 ```
 
-while the constraint function had the following form:
+The constraint function had the following form:
 ```
 function F = my_constraint_function(SNOB)
 
@@ -164,15 +163,15 @@ end
 
 ### Setting The Constraints
 
-The values of the constraints for each constrained property are set after creating a SNOBFit object in MATLAB, before running the experiment.
+The values of the constraints for each constrained property should be set after creating a SNOBFit object in MATLAB, and before running the experiment.
 
-To set up your SNOBFit object for the above optimisation:
+To set up your SNOBFit object for the above optimisation type:
 ```
-snobfit_object = snobclass()
-snobfit_object.name = 'constrained_optimisation';
-snobfit_object.fcn = 'my_objective_function';
-snobfit_object.softfcn = 'my_constraint_function';
-snobfit.soft = true;
+snobfit_object = snobclass(); %create object
+snobfit_object.name = 'constrained_optimisation'; %specify file name
+snobfit_object.fcn = 'my_objective_function'; %specify objective function
+snobfit_object.softfcn = 'my_constraint_function'; %specify constraint function
+snobfit.soft = true; %specify problem as a constrained optimisation; if set to false, the constraints will be ignored
 ```
 The values of the constraints are then set as *upper* and *lower* limits on each of the constraint functions:
 ```
@@ -180,38 +179,38 @@ snobfit_object.F_upper = [inf; 0.5];
 snobfit_object.F_lower = [0.9; 0];
 ```
 In this example:
-*  *snobfit_object.F_upper* stores the *upper limits*
-*  *snobfit_object.F_lower* stores the *lower limits*
-*  Both are *1*-by-*n* arrays, where *n* is the number of constraint functions
+*  *snobfit_object.F_upper* stores the *upper limits* for each constrained property
+*  *snobfit_object.F_lower* stores the *lower limits* for each constrained property
+*  Both are *1*-by-*n* arrays, where *n* is the number of constrained properties
 *  The order of the elements in *F_lower* and *F_upper* must match the column order of *F*
 *  The first column of *F* corresponds to [X1+X2]. Hence the first elements of *F_lower* and *F_upper* must correspond to the limits on [X1+X2]
 *  The second column of *F* corresponds to R. Hence the second elements of *F_lower* and *F_upper* must correspond to the limits on R
 
-You will also need to define how soft or hard each constraint function is, using the &#963; parameter:
+SNOBFIT treats the bounds specified in *F_lower* and *F_upper* as "preferred limits" that can be partially violated if this leads to a better solution, i.e. one with a lower merit value. The extent to which the preferred bounds may be violoated is specified using the &#963; parameter:
 ```
 snobfit_object.sigma = [0.3; 0.3]
 ```
-Here we have set &#963; to the same value for both constraints, but you can chose any values that suit your purpose. The simplest way to determine the &#963; values is to set them equal to the maximum tolerable violation of a constraint. For our example this would mean that we could tolerate anything down to 0.6 for [X1+X2] (*F_lower* - &#963;), and anything up to 0.8 for R (*F_upper* + &#963;). The order of the elements in snobfit_object.sigma must match the column order of *F*
+Here we have set &#963; to the same value of 0.3 for both constraints, but you can chose any values that suit your purpose. The simplest way to choose the &#963; values is to set them equal to the maximum tolerable violation of each constraint. For our example, for the example given, our choice of &#963; values would mean that we could tolerate anything down to 0.6 for [X1+X2] (*F_lower* - &#963;), and anything up to 0.8 for R (*F_upper* + &#963;). The order of the elements in snobfit_object.sigma must match the column order of *F*.
 
-### Setting the Bounds
+### Setting Bounds on the Input Parameters
 
-SNOBFit is a bounded optimisation algorithm, which means that it only works with limits placed on the parameters that you are varying. This makes it a good fit for chemical optimisations, which usually have limits on the ranges of reaction conditions. These may be physical limitations, for instance the boiling point of a solvent places an upper limit on the temperature of a reaction, or just the range of conditions within which you think the optimium should lie.
+SNOBFit is a bounded optimisation algorithm, which means you must specify upper and lower limits for each input parameter. This makes it a good fit for chemical optimisations, where the range of usable reaction conditions is typically limited due to physical limitations. For instance, in a flow-based reaction, the boiling point of a solvent places an upper limit on the reaction temperature. It may sometimes be the case that you know from previous experience the range of conditions within which the optimium lies, meaning you should limit your search to include this range only.
 
-These bounds can be set by changing properties on the SNOBFit object. For an optimisation that is changing two reaction conditions, this might be:
+The bounds on the input parameters can be set by changing properties on the SNOBFit object. For a 2D optimisation (i.e. one with two variable reaction conditions) you should enter something like this:
 ```
 snobfit_object.x_lower = [5; 30];   % lower bounds
 snobfit_object.x_upper = [25; 80];  % upper bounds
 ```
 In this example:
 * The lower bounds are set with the *x_lower* property, and the upper bounds are set with the *x_upper* property.
-* The number of lower/upper bounds you declare defines the dimensionality of the optimisation, no further setup is required (with the exception defined below where input parameters are linked together).
+* SNOBfit infers the dimensionality of the optimisation from the number of lower/upper bounds you declare. You do not need to specify the dimensionality elsewhere. Hence, since there are two elements in *x_lower* and *x_upper* SNOBfit knows that you are carrying out a 2D optimisation.
 * *x_lower* and *x_upper* are both *n*-by-*1* arrays where *n* is the number of reaction conditions, or dimensions, you are changing in your optimisation.
-* In the above example SNOBFit is allowed to test any value between 5 and 25 for input parameter *1* and any value between 30 and 80 for parameter *2*.
-* The order of the bounds in *x_lower* and *x_upper* must match the column order in *snobfit_object.next*. Hence, if the first column of *snobfit_object.next* is the reaction temperature, then the first elements of *x_lower* and *x_upper* must correspond to the lower and upper limits on the temperature.
+* In the above example SNOBFit is allowed to test any value between 5 and 25 for input parameter *1* and any value between 30 and 80 for parameter *2*. The exact values you specify will of course depend on the nature of your own experiment.
+* The order of the bounds in *x_lower* and *x_upper* must match the column order in *snobfit_object.next*. Hence, if the first column of *snobfit_object.next* is the reaction temperature, then the first elements of *x_lower* and *x_upper* must correspond to the lower and upper bounds on the temperature.
 
 #### Linked Bounds
 
-If you are using a flow reactor, two things that you often want to control are the overall flow rate of reagents and the ratio of those flow rates to each other. (Large mismatches in flow rate can cause problems with the flow, so it is necessary to specify lower and upper limits for the flow rate ratio). However, this links the flow rates together and forms a trapezoidal boundary for the reaction conditions as described in our article. SNOBFit handles rectangular boundaries, so the flow rate boundaries need to be transformed into a square before it can use them. A method for handling this has been included in the SNOBFit object. **Currently it only works for two reagent flow rates, and a third (optional) unlinked reaction condition**.
+If you are using a flow reactor, it is frequently necessary to set limits on the total flow-rate of reagents and the ratio of those flow rates: if the total flow-rate is too low, the reaction will take too long; if the total flow-rate is too high or the individual flow rates are too different, the flow may become unstable. For an optimisation in which we are varying two flow rates, this results in a trapezoidal boundary that cannot be directly handled by SNOBFit (see our article for further details). To allow SNOBFit to handle the trapezoidal constraints, we use a spatial transformation that converts the trapezoidal boundary into a rectangular one that can be handled by SNOBFit. This is done automatically by following the procedure described below. **In its current implementation the method works for two reagent flow rates only, plus a third (optional) unlinked reaction condition**.
 
 To use linked reaction conditions, you need to change the property on the SNOBFit object:
 ```
@@ -233,7 +232,7 @@ snobfit_object.zMax = 150;
 
 ### Termination Criteria
 
-The final thing that you might want to change for your own chemical optimisation is the termination criterion, or when the optimisation decides that it has finished. The options that have been incorporated into the SNOBFit object are called **'minimised'**, **'no_change'**, and **'n_runs'**. 
+The final thing that you might want to change (depending on the nature of your optimisation) is the termination criterion, which is used to decide when the optimisation has finished. The options that have been incorporated into the SNOBFit object are called **'minimised'**, **'no_change'**, and **'n_runs'**. 
 
 **The default option is 'minimised'**. This means that the optimisation will end when the best objective function value is below a threshold value, or after a maximum number of objective function evaluations. You can set this threshold, and a target minimum if known:
 ```
@@ -243,7 +242,7 @@ snobfit_object.threshold = 0.001;          % threshold for termination
 snobfit_object.ncall = 100;                % maximum number of objective function evaluations
 ```
 
-If you are running a constrained optimisation, there is an additional check to make sure the point(s) that satisfy the termination criterion also satisfy the constraints.
+If you are running a constrained optimisation, there is an additional check to make sure the point(s) that satisfy the termination criterion also satisfy the constraints. [WHAT DOES THIS MEAN FOR THE USER? DO THEY NEED TO DO ANYTHING OR BE AWARE OF ANYTHING?]
 
 Another termination criterion is **'no_change'**. This ends the optimisation if there has been no change in the best objective function value for a set number of calls to the SNOBFit algorithm. There is a chance that this may terminate the optimisation too early, so you can also set a minimum number of objective function evaluations before checking for a change:
 ```
@@ -252,7 +251,7 @@ snobfit_object.ncallNoChange = 5;         % number of SNOBFit calls without a ch
 snobfit_object.minCalls = 50;             % minimum number of function evaluations before checking for a change
 ```
 
-The final termination criterion included in the SNOBFit object is **'n_runs'**. This terminates the optimisation after a set number of evaluations of the objective function:
+The final termination criterion included in the SNOBFit object is **'n_runs'**. This terminates the optimisation after a set number of evaluations of the objective function (and is the one we used for the work described in our article):
 ```
 snobfit_object.termination = 'n_runs'; % termination criterion
 snobfit_object.ncall = 100;            % maximum number of function evaluations
@@ -260,4 +259,4 @@ snobfit_object.ncall = 100;            % maximum number of function evaluations
 
 These termination conditions have been included in the SNOBFit object for ease of use. There may be other criteria that are more suitable to your particular use. If you want to add any conditions, you can add them to the **'+snobfitclass/@snobclass/checkTermination.m'** file.
 
-#### This should be all of the information that you need to successfully run a soft constrained optimisation using our SNOBFit interface, for a chemical synthesis. :microscope: :thumbsup:
+#### This should be all of the information that you need to run a soft constrained optimisation using our SNOBFit interface, for a chemical synthesis. :microscope: :thumbsup:
