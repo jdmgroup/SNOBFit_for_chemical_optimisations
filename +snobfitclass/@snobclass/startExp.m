@@ -27,7 +27,7 @@ function startExp(SNOB)
 	notify(SNOB, 'StartingExp');
 	
 	if SNOB.constrained & ~SNOB.combo
-		SNOB.runconstrained;
+		SNOB.runcon;
 	elseif SNOB.combo
 		SNOB.runcombo;
 	else
