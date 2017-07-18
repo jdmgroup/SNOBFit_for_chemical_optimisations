@@ -1,9 +1,7 @@
 # Creating Your Own SNOBFit Optimisation
 **Barnaby Walker, James Bannock, Adrian Nightingale, and John de Mello**
 
-In our article '*Tuning Reaction Products by Constrained Optimisation*' we describe a simple method for carrying out multiobjective chemical optimisations, in which a compromise must be reached between several competing properties. The optimisation is carried out by treating the problem as a constrained optimisation, in which a lead property is minimised subject to upper and lower limits on the values that the other properties may attain. The algorithm we used to carry out the optimisation was "Stable Noisy Optimisation by Branch and Fit (SNOBFit)" by [Huyer and Neumaier](https://www.mat.univie.ac.at/neum/ms/snobfit.pdf). 
-
-For convenience, we have developed a MATLAB class-based wrapper for SNOBFit [implementation provided by Huyer and Neumaier](http://www.mat.univie.ac.at/neum/software/snobfit/), which simplifies both the installation of SNOBFit and its use.
+In our article '*Tuning Reaction Products by Constrained Optimisation*' we describe a simple method for carrying out multiobjective chemical optimisations, in which a compromise must be reached between several competing properties. The optimisation is carried out by treating the problem as a "constrained optimisation", in which a lead property is minimised subject to upper and lower limits being placed on the values that the other properties may attain. The algorithm we used to carry out the optimisation was "Stable Noisy Optimisation by Branch and Fit (SNOBFit)" by Huyer and Neumaier (https://www.mat.univie.ac.at/neum/ms/snobfit.pdf). For convenience, we have developed a class-based wrapper for their Matlab based implementation of SNOBFit (http://www.mat.univie.ac.at/neum/software/snobfit/), which simplifies both the installation of SNOBFit and its use.
 
 In this folder you will find tutorials explaining how to install our MATLAB package, how to run a standard (unconstrained) optimisation with SNOBFit, and how to run a constrained optimisation.
 
@@ -23,25 +21,24 @@ Our SNOBFit package is organised in the following folders:
 └── @snobclass
 ```
 
-The **@snobclass** folder contains files defining the SNOBFit class, and the functions that it uses to run an optimisation, and the **@snobHandler** folder contains functions that allow the class to handle things like plotting and saving to files. As our SNOBFit interface is a wrapper around the implementation provided by Huyer and Neumaier, it uses some of the code they wrote to call the SNOBFit algorithm. The folders **+snobfcn** and **+minq5** contain files from their original implementation.
+The **@snobclass** folder contains files defining the SNOBFit class, and the functions that it uses to run an optimisation. The **@snobHandler** folder contains functions that allow the class to handle things like plotting and saving to files. As our SNOBFit interface is a wrapper around the implementation provided by Huyer and Neumaier, it uses parts of their code to call the SNOBFit algorithm. The folders **+snobfcn** and **+minq5** contain files from their original implementation.
 
-The important folders for defining your own custom optimisation are **+objfcn** and **+confcn**. All of the *objective function* definitions are stored in **+objfcn** and all of the *constraint function* definitions are stored in **+confcn**. Once you have written your function definitions (following the procedure described below), you will need to save them to the appropriate folders.
+The important folders for defining your own custom optimisation are **+objfcn** and **+confcn**. All of the *objective function* definitions are stored in **+objfcn**, while all of the *constraint function* definitions are stored in **+confcn**. Once you have written your function definitions (following the procedure outlined below), you will need to save them to the appropriate folders.
 
 ### Writing an Objective Function for an Unconstrained Optimisation
 
 For an unconstrained optimisation, your objective function must:
 * Take a SNOBFit object (an instance of the SNOBFit class) as its only argument
-* Return a 1D array of objective function values at each set of input parameters
-* Each cell of the output array corresponds to the function value at a different set of reaction conditions
+* Return a 1D array of objective function values at each set of input parameters, where each cell of the output array corresponds to the function value at a different set of reaction conditions
 
 An example objective function from the SNOBFit package is the *hsf18* 2D surface in **+objfcn**:
 ```
 function f = hsf18(SNOB)
 
-    x1 = SNOB.next(:,1);      % x1 is the first input parameter
-    x2 = SNOB.next(:,2);      % x2 is the second input parameter
+    x1 = SNOB.next(:,1);      % x1 is a 1D column vector for the first input parameter
+    x2 = SNOB.next(:,2);      % x2 is a 1D column vector for the second input parameter
 
-    f = 0.01*x1.^2 + x2.^2;   % f is a 1D column vector containing function values at each set of input parameters (x1,x2)
+    f = 0.01*x1.^2 + x2.^2;   % f is a 1D column vector, where the *i*th elemement f(*i*) contains the function value at (x1(*i*),x2(*i*))
 
 end
 ```
@@ -52,7 +49,7 @@ In this example:
 * Since we are carrying out a 2D optimisation SNOB.next has two columns, one for each input parameter
 * For clarity, the input parameters have been unpacked from SNOB.next and assigned to *x1* and *x2*
 * There is a single output property *f* that we wish to minimise
-* The objective function returns a 1D column vector *f*, in which each element corresponds to the value of f at a different set of input parameter values
+* The objective function returns a 1D column vector *f*, where the *i*th elemement f(*i*) contains the function value at (x1(*i*),x2(*i*))
 
 ### Writing a Constraint Function
 
