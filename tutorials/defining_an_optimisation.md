@@ -1,7 +1,7 @@
 # Creating Your Own SNOBFit Optimisation
 **Barnaby Walker, James Bannock, Adrian Nightingale, and John de Mello**
 
-In our article '*Tuning Reaction Products by Constrained Optimisation*' we describe a simple method for carrying out multiobjective chemical optimisations, in which a compromise must be reached between several competing properties. The optimisation is carried out by treating the problem as a "constrained optimisation", in which a lead property is minimised subject to upper and lower limits being placed on the values that the other properties may attain. The optimisation routine used to carry out the optimisation is "Stable Noisy Optimisation by Branch and Fit (SNOBFit)" by Huyer and Neumaier (https://www.mat.univie.ac.at/neum/ms/snobfit.pdf). For convenience, we have developed a class-based wrapper for their Matlab-based implementation of SNOBFit (http://www.mat.univie.ac.at/neum/software/snobfit/), which simplifies both the installation of SNOBFit and its use, especially for chemical and blackbox optimisations.
+In our article '*Tuning Reaction Products by Constrained Optimisation*' we describe a simple method for carrying out multiobjective chemical optimisations, in which a compromise must be reached between several competing properties. The optimisation is carried out by treating the problem as a "constrained optimisation", in which a lead property is minimised subject to upper and lower limits being placed on the values that the other properties may attain. The optimisation routine used to carry out the optimisation is "Stable Noisy Optimisation by Branch and Fit (SNOBFit)" by [Huyer and Neumaier](https://www.mat.univie.ac.at/neum/ms/snobfit.pdf) (https://www.mat.univie.ac.at/neum/ms/snobfit.pdf). For convenience, we have developed a class-based wrapper for their [Matlab-based implementation of SNOBFit](http://www.mat.univie.ac.at/neum/software/snobfit/) (http://www.mat.univie.ac.at/neum/software/snobfit/), which simplifies both the installation of SNOBFit and its use, especially for chemical and blackbox optimisations.
 
 In this folder you will find tutorials explaining how to install our MATLAB package, how to run a standard (unconstrained) optimisation with SNOBFit, and how to run a constrained optimisation.
 
@@ -53,7 +53,7 @@ In this example:
 
 ### Writing a Constraint Function for a Mathematical Optimisation
 
-You will use a single constraint function to define all constraints. Your constraint function must:
+You will use a single MATLAB function to define all constraints. Your constraint MATLAB function must:
 * Take a SNOBFit object as its only argument
 * Return the values of all the constraint functions as a single *n*-by-*m* array, where *n* is the number of experiments (rows) and *m* is the number of constraints (columns)
 
@@ -77,7 +77,7 @@ In this example:
 
 ### Naming Your Function Files
 
-**Your objective and constraint functions should be given the same name**. For example, both functions above should be saved as **hsf18.m**.
+**The file name of your objective or constraint function must be given the same name as the function**. For example, both functions above should be saved as **hsf18.m**.
 
 You must save *objective* functions in the **+objfcn** folder and *constraint* functions in the **+confcn** folder. In this way, the function and file names for a pair of objective and constraint functions may be the same without causing any conflicts.
 
@@ -118,7 +118,7 @@ In this example:
 * the output property values are stored in SNOB.valuesToPass, allowing them to be subsequently retrieved by the constraint function
 * the objective function as written above is configured to minimise output_properties(:,1)
 
-In '*Tuning Reaction Products by Constrained Optimisation*' we optimised a cascadic synthesis with four competing products: X0, X1, X2, and X3. For instance, Run X involved minimising [X3] (our lead property), while setting a minimum value of 90 % for [X1+X2] = [X1] + [X2] (our first constrained property) and a minimum value of 2 for the ratio R = [X2]/[X1] (our second constrained property) where [X] signifies the mole fraction of X in the sample.
+In '*Tuning Reaction Products by Constrained Optimisation*' we optimised a cascadic synthesis with four competing products: X0, X1, X2, and X3. For instance, Run IV involved minimising [X3] (our lead property), while setting a minimum value of 90 % for [X1+X2] = [X1] + [X2] (our first constrained property) and a maximum value of 0.5 for the ratio R = [X1]/[X2] (our second constrained property) where [X] signifies the mole fraction of X in the sample.
 
 This problem may be summarised as:
 
@@ -126,7 +126,7 @@ This problem may be summarised as:
 * [X1+X2] > 0.9
 * R < 0.5
 
-For the specific case of Run X our objective function had the following form, where *run_reaction* was a function that accepted as its inputs the flow rates of the two reagents plus the temperature, and returned as its output a four column array containing [X0],[X1],[X2] and [X3] in columns one to four, respectively:
+For the specific case of Run IV our objective function had the following form, where *run_reaction* was a function that accepted as its inputs the flow rates of the two reagents plus the temperature, and returned as its output a four column array containing [X0],[X1],[X2] and [X3] in columns one to four, respectively:
 
 ```
 function f = my_objective_function(SNOB)
@@ -242,7 +242,7 @@ snobfit_object.threshold = 0.001;          % threshold for termination
 snobfit_object.ncall = 100;                % maximum number of objective function evaluations
 ```
 
-If you are running a constrained optimisation, there is an additional check to make sure the point(s) that satisfy the termination criterion also satisfy the constraints. [WHAT DOES THIS MEAN FOR THE USER? DO THEY NEED TO DO ANYTHING OR BE AWARE OF ANYTHING?]
+If you are running a constrained optimisation, there is an additional check to make sure the point(s) that satisfy the termination criterion also satisfy the constraints. If an objective function value below the threshold is found that does not satisfy the constraints, the optimisation will continue.
 
 Another termination criterion is **'no_change'**. This ends the optimisation if there has been no change in the best objective function value for a set number of calls to the SNOBFit algorithm. There is a chance that this may terminate the optimisation too early, so you can also set a minimum number of objective function evaluations before checking for a change:
 ```
