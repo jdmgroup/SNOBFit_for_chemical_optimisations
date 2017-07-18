@@ -182,13 +182,15 @@ In this example:
 *  *snobfit_object.F_upper* stores the *upper limits*
 *  *snobfit_object.F_lower* stores the *lower limits*
 *  Both are *1*-by-*n* arrays, where *n* is the number of constraint functions
-*  The position of each value corresponds to the column the the constraint is output to *F* in, e.g. the constraint function *X1/X2* is output to the *first column* in our function, so the lower limit of 0.9 is the *first value* in *F_lower*.
+*  The order of the elements in *F_lower* and *F_upper* must match the column order of *F*
+*  The first column of F corresponds to [X12]. Hence the first elements of *F_lower* and *F_upper* must correspond to the limits on [X12]
+*  The second column of F corresponds to R. Hence the second elements of *F_lower* and *F_upper* must correspond to the limits on R
 
 You will also need to define how soft or hard each constraint function is, using the &#963; parameter:
 ```
 snobfit_object.sigma = [0.3; 0.3]
 ```
-Here we have set &#963; to the same value for both constraints, but you can chose any values that suit your purpose. The simplest way to determine the &#963; values is to set them equal to the maximum tolerable violation of a constraint. For our example this would mean that we could tolerate anything down to 0.6 for X1 + X2 (*F_lower* - &#963;), and anything up to 0.8 for X1 / X2 (*F_upper* + &#963;).
+Here we have set &#963; to the same value for both constraints, but you can chose any values that suit your purpose. The simplest way to determine the &#963; values is to set them equal to the maximum tolerable violation of a constraint. For our example this would mean that we could tolerate anything down to 0.6 for X1 + X2 (*F_lower* - &#963;), and anything up to 0.8 for X1 / X2 (*F_upper* + &#963;). The order of the elements in snobfit_object.sigma must match the column order of *F*
 
 ### Setting the Bounds
 
