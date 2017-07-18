@@ -38,7 +38,7 @@ function f = hsf18(SNOB)
     x1 = SNOB.next(:,1);      % x1 is a 1D column vector for the first input parameter
     x2 = SNOB.next(:,2);      % x2 is a 1D column vector for the second input parameter
 
-    f = 0.01*x1.^2 + x2.^2;   % f is a 1D column vector, where the *i*th elemement f(*i*) contains the function value at (x1(*i*),x2(*i*))
+    f = 0.01*x1.^2 + x2.^2;   % f is a 1D column vector, where the ith elemement f(i) contains the function value at (x1(i),x2(i))
 
 end
 ```
