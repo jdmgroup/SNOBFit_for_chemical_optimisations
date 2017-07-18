@@ -44,7 +44,7 @@ end
 ```
 In this example:
 * SNOB is the SNOBFit object
-* The sets of input parameter values to be tested are stored as rows in the SNOB.next 2D array
+* Each set of input parameter values to be tested is stored as a separate row in the SNOB.next 2D array
 * Each column of SNOB.next represents a separate input parameter
 * Since we are carrying out a 2D optimisation SNOB.next has two columns, one for each input parameter
 * For clarity, the input parameters have been unpacked from SNOB.next and assigned to *x1* and *x2*
