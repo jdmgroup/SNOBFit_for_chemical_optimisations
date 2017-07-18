@@ -259,4 +259,4 @@ snobfit_object.ncall = 100;            % maximum number of function evaluations
 
 These termination conditions have been included in the SNOBFit object for ease of use. There may be other criteria that are more suitable to your particular use. If you want to add any conditions, you can add them to the **'+snobfitclass/@snobclass/checkTermination.m'** file.
 
-#### This should be all of the information that you need to run a soft constrained optimisation using our SNOBFit interface, for a chemical synthesis. :microscope: :thumbsup:
+#### This should be all of the information that you need to run a soft constrained optimisation using our SNOBFit interface, for a chemical synthesis. Good luck! :microscope: :thumbsup:
