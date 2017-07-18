@@ -49,7 +49,7 @@ In this example:
 * Since we are carrying out a 2D optimisation SNOB.next has two columns, one for each input parameter
 * For clarity, the input parameters have been unpacked from SNOB.next and assigned to *x1* and *x2*
 * There is a single output property *f* that we wish to minimise
-* The objective function returns a 1D column vector *f*, where the *i*th elemement f(*i*) contains the function value at (x1(*i*),x2(*i*))
+* The objective function returns a 1D column vector *f*, where the *i*th element f(*i*) contains the function value at (x1(*i*),x2(*i*))
 
 ### Writing a Constraint Function for a Mathematical Optimisation
 
@@ -81,7 +81,7 @@ In this example:
 
 You must save *objective* functions in the **+objfcn** folder and *constraint* functions in the **+confcn** folder. In this way, the function and file names for a pair of objective and constraint functions may be the same without causing any conflicts.
 
-When you set the objective and constraint functions on your SNOBFit object you then need to give the name of the files, e.g.
+You need to supply the names of the objective and constraint functions to your SNOBFit object as follows
 ```
 snobfit_object.fcn = 'hsf18'      % objective function
 snobfit_object.softfcn = 'hsf18'  % constraint function
