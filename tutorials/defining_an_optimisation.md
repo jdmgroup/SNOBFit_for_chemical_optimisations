@@ -84,11 +84,11 @@ You must save *objective* functions in the **+objfcn** folder and *constraint* f
 You need to supply the names of the objective and constraint functions to your SNOBFit object as follows:
 ```
 snobfit_object.fcn = 'hsf18'      % objective function
-snobfit_object.softfcn = 'hsf18'  % constraint function
+snobfit_object.constraintFcn = 'hsf18'  % constraint function
 ```
-Note: You can only assign functions in the **+objfcn** folder to *'snobfit_object.fcn'*, and similarly you can only assign functions in **+confcn** to *'snobfit_object.softfcn'*. If you do not define the constraint function, then SNOBFit will carry out an unconstrained optimisation.
+Note: You can only assign functions in the **+objfcn** folder to *'snobfit_object.fcn'*, and similarly you can only assign functions in **+confcn** to *'snobfit_object.constraintFcn'*. If you do not define the constraint function, then SNOBFit will carry out an unconstrained optimisation.
 
-To run the optimisation, you should follow the steps described in *using_soft_snobfit.mlx*.
+To run the optimisation, you should follow the steps described in *using_constrained_snobfit.mlx*.
 
 ## Defining a Chemical (or Blackbox) Optimisation
 The instructions provided above include all of the information needed to define a mathematical optimisation problem, in which the objective function and constraint functions are known algebraic functions of the input parameters. Chemical optimisation is an example of blackbox optimisation, in which we do not know the functional dependence of the output properties on the input parameters, and so we must carry out an experiment to determine the output properties for a given set of input parameters. Blackbox optimisation is handled in a slightly different manner to mathematical optimisation as described below.
@@ -170,8 +170,8 @@ To set up your SNOBFit object for the above optimisation type:
 snobfit_object = snobclass(); %create object
 snobfit_object.name = 'constrained_optimisation'; %specify file name
 snobfit_object.fcn = 'my_objective_function'; %specify objective function
-snobfit_object.softfcn = 'my_constraint_function'; %specify constraint function
-snobfit.soft = true; %specify problem as a constrained optimisation; if set to false, the constraints will be ignored
+snobfit_object.constraintFcn = 'my_constraint_function'; %specify constraint function
+snobfit.constrained = true; %specify problem as a constrained optimisation; if set to false, the constraints will be ignored
 ```
 The values of the constraints are then set as *upper* and *lower* limits on each of the constraint functions:
 ```

@@ -62,8 +62,8 @@ function loadPrevious(SNOB,src,event)
 							SNOB.x_upper = old_snob.SNOB.x_upper;
 						end
 
-						SNOB.soft = old_snob.SNOB.soft;
-						if SNOB.soft
+						SNOB.constrained = old_snob.SNOB.constrained;
+						if SNOB.constrained
 							SNOB.F = old_snob.SNOB.F;
 							SNOB.fm = old_snob.SNOB.fm;
 						end

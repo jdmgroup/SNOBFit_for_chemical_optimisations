@@ -1,4 +1,4 @@
-function runsoft(SNOB)
+function runcon(SNOB)
 
 	import snobfitclass.snobfcn.*
 
@@ -40,7 +40,7 @@ function runsoft(SNOB)
 	SNOB.next = x;
 
 	f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);
-	F = feval(['snobfitclass.confcn.',SNOB.softfcn],SNOB);
+	F = feval(['snobfitclass.confcn.',SNOB.constraintFcn],SNOB);
 
 	isvalid = find(sum(repmat(SNOB.F_lower',SNOB.npoint,1) <= F & F <= repmat(SNOB.F_upper',SNOB.npoint,1)));
 	if ~isempty(isvalid)
@@ -90,7 +90,7 @@ function runsoft(SNOB)
 		SNOB.next = x;
 
 		f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);
-		F = feval(['snobfitclass.confcn.',SNOB.softfcn],SNOB);
+		F = feval(['snobfitclass.confcn.',SNOB.constraintFcn],SNOB);
 
 		fm = zeros(size(f));
 		for i = 1:SNOB.nreq

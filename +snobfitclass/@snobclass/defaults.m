@@ -108,7 +108,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf18'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = [2; 0];
 			SNOB.x_upper = [50; 50];
 			SNOB.F_lower = [0; 0];
@@ -121,7 +121,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf19'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = [13; 0];
 			SNOB.x_upper = [100; 100];
 			SNOB.F_lower = [0; 0];
@@ -134,7 +134,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf23'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = [-50; -50];
 			SNOB.x_upper = [50; 50];
 			SNOB.F_lower = zeros(5,1);
@@ -147,7 +147,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf30'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = [1; -10; -10];
 			SNOB.x_upper = [10; 10; 10];
 			SNOB.F_lower = 0;
@@ -160,7 +160,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf31'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = [-10; 1; -10];
 			SNOB.x_upper = [10; 10; 1];
 			SNOB.F_lower = 0;
@@ -173,7 +173,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf34'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = [0; 0; 0];
 			SNOB.x_upper = [100; 100; 10];
 			SNOB.F_lower = [0; 0];
@@ -186,7 +186,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf36'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = [0; 0; 0];
 			SNOB.x_upper = [20; 11; 42];
 			SNOB.F_lower = 0;
@@ -199,7 +199,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf37'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = [0; 0; 0];
 			SNOB.x_upper = [42; 42; 42];
 			SNOB.F_lower = [0; 0];
@@ -212,7 +212,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf41'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = zeros(4,1);
 			SNOB.x_upper = [ones(3,1); 2];
 			SNOB.F_lower = 0;
@@ -225,7 +225,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf53'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = -10*ones(5,1);
 			SNOB.x_upper = 10*ones(5,1);
 			SNOB.F_lower = zeros(3,1);
@@ -238,7 +238,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf60'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = -10*ones(3,1);
 			SNOB.x_upper = 10*ones(3,1);
 			SNOB.F_lower = 0;
@@ -251,7 +251,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf65'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = [-4.5; -4.5; -5];
 			SNOB.x_upper = [4.5; 4.5; 5];
 			SNOB.F_lower = 0;
@@ -264,7 +264,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf66'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = zeros(3,1);
 			SNOB.x_upper = [100; 100; 10];
 			SNOB.F_lower = [0; 0];
@@ -277,7 +277,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf71'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = zeros(4,1);
 			SNOB.x_upper = 5*ones(4,1);
 			SNOB.F_lower = [0; 0];
@@ -290,7 +290,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf73'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = zeros(4,1);
 			SNOB.x_upper = Inf*ones(4,1);
 			SNOB.F_lower = zeros(3,1);
@@ -303,7 +303,7 @@ function SNOB = defaults(SNOB)
 
 		case 'hsf74'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			a = 0.55;
 			SNOB.x_lower = [0; 0; -a; -a];
 			SNOB.x_upper = [1200; 1200; a; a];
@@ -327,7 +327,7 @@ function SNOB = defaults(SNOB)
 
 		case 'testValuePassing'
 			SNOB.linked = false;
-			SNOB.soft = true;
+			SNOB.constrained = true;
 			SNOB.x_lower = [2; 0];
 			SNOB.x_upper = [50; 50];
 			SNOB.F_lower = [0; 0];

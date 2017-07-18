@@ -1,4 +1,4 @@
-function setConstraints(SNOB,src,event)
+function setLinkedBounds(SNOB,src,event)
 	if ~isempty(SNOB.xyMin) & ~isempty(SNOB.xyMax) & ~isempty(SNOB.maxRatio) & ~isempty(SNOB.minRatio)
 		x1 = SNOB.xyMin / (1 + 1/SNOB.maxRatio);
 		y1 = x1 / SNOB.maxRatio;

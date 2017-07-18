@@ -40,7 +40,7 @@ function runcombo(SNOB)
 
         % evaluate objective and constraint functions
         f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);
-        F = feval(['snobfitclass.confcn.',SNOB.softfcn],SNOB);
+        F = feval(['snobfitclass.confcn.',SNOB.constraintFcn],SNOB);
 
         % store values
         SNOB.x = x;
@@ -104,7 +104,7 @@ function runcombo(SNOB)
 
             % evaluate objective and constraint functions
             f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);
-            F = feval(['snobfitclass.confcn.',SNOB.softfcn],SNOB);
+            F = feval(['snobfitclass.confcn.',SNOB.constraintFcn],SNOB);
 
             % store values
 
@@ -123,7 +123,7 @@ function runcombo(SNOB)
                 break;
             end
         end
-        SNOB.softstart = SNOB.ncall0;
+        SNOB.conStart = SNOB.ncall0;
 
         % increase the total desired function calls to those already done, plus the desired count
         %SNOB.ncall = SNOB.ncall0 + SNOB.ncall;
@@ -156,7 +156,7 @@ function runcombo(SNOB)
         fm(:,2) = sqrt(eps);
     end
 
-	% enter the soft SNOBFit portion
+	% enter the constrained SNOBFit portion
 	while stop_condition == 0
 		if SNOB.ncall0 == SNOB.npoint
 			[request,xbest,fbest] = snobfit(working_file, x_old, fm, params, SNOB.dx);
@@ -184,7 +184,7 @@ function runcombo(SNOB)
 		SNOB.next = x;
 
 		f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);
-		F = feval(['snobfitclass.confcn.',SNOB.softfcn],SNOB);
+		F = feval(['snobfitclass.confcn.',SNOB.constraintFcn],SNOB);
 
 		fm = zeros(size(f));
 		for i = 1:SNOB.nreq

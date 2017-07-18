@@ -12,8 +12,8 @@ function startExp(SNOB)
 		SNOB.name = 'untitled';
 	end
 
-	if SNOB.soft | SNOB.combo
-		if strcmp(SNOB.softfcn, 'none')
+	if SNOB.constrained | SNOB.combo
+		if strcmp(SNOB.constraintFcn, 'none')
 			error('You must set a constraint function for constrained optimisations')
 		elseif isempty(SNOB.F_lower) | isempty(SNOB.F_upper)
 			error('You have not set the upper and lower limits of your constraints')
@@ -24,8 +24,8 @@ function startExp(SNOB)
 
 	notify(SNOB, 'StartingExp');
 	
-	if SNOB.soft & ~SNOB.combo
-		SNOB.runsoft;
+	if SNOB.constrained & ~SNOB.combo
+		SNOB.runconstrained;
 	elseif SNOB.combo
 		SNOB.runcombo;
 	else
@@ -33,7 +33,7 @@ function startExp(SNOB)
 	end
 	if SNOB.repeatBest
 		% evaluate the function again, at the best point to check consistency
-		if SNOB.soft | SNOB.combo
+		if SNOB.constrained | SNOB.combo
 			[fbest,jbest] = min(SNOB.fm);
 		else
 			[fbest,jbest] = min(SNOB.f);
@@ -42,8 +42,8 @@ function startExp(SNOB)
 		SNOB.next = x;
 
 		f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);
-		if SNOB.soft | SNOB.combo
-			F = feval(['snobfitclass.confcn.',SNOB.softfcn],SNOB);
+		if SNOB.constrained | SNOB.combo
+			F = feval(['snobfitclass.confcn.',SNOB.constraintFcn],SNOB);
 			
 			fm = softmerit(f,F,SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
 			

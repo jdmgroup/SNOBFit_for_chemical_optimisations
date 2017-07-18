@@ -48,7 +48,7 @@ function saveExp(SNOB)
 			end
 		end
 		
-		if SNOB.soft | SNOB.combo
+		if SNOB.constrained | SNOB.combo
 			results = [results, SNOB.fm, SNOB.f, SNOB.F];
 			hdrs  = [hdrs,'f,fobj,'];
 			for i = 1:size(SNOB.F,2)
@@ -75,17 +75,17 @@ function saveExp(SNOB)
 		% Save a text summary of the experiment with the setup and best point
 		hdrs = 'Experiment,Created,Function,Method';
 		summary_str = sprintf('%s,%s,%s,',SNOB.name,SNOB.created,SNOB.fcn);
-		if SNOB.soft
-			summary_str = [summary_str,'soft'];
+		if SNOB.constrained
+			summary_str = [summary_str,'constrained'];
 		elseif SNOB.combo
 			summary_str = [summary_str,'combo'];
 		else
 			summary_str = [summary_str,'normal'];
 		end
 
-		if SNOB.soft || SNOB.combo
-			hdrs = [hdrs,',softfcn,softstart'];
-			summary_str = [summary_str,sprintf(',%s,%d',SNOB.softfcn,SNOB.softstart)];
+		if SNOB.constrained || SNOB.combo
+			hdrs = [hdrs,',constraintFcn,conStart'];
+			summary_str = [summary_str,sprintf(',%s,%d',SNOB.constraintFcn,SNOB.conStart)];
 			for i = 1:length(SNOB.sigma)
 				hdrs = [hdrs,sprintf(',sigma%d',i)];
 				summary_str = [summary_str,sprintf(',%f',SNOB.sigma(i))];
@@ -127,19 +127,19 @@ function saveExp(SNOB)
 		hdrs = [hdrs,',fbest'];
 		summary_str = [summary_str,sprintf(',%f',SNOB.fbest)];
 
-		if SNOB.combo || SNOB.soft
+		if SNOB.combo || SNOB.constrained
 			for i = 1:SNOB.n
-				hdrs = [hdrs,',xsoft',num2str(i)];
-				if ~isempty(SNOB.xsoft)
-					summary_str = [summary_str,sprintf(',%f',SNOB.xsoft(i))];
+				hdrs = [hdrs,',xcon',num2str(i)];
+				if ~isempty(SNOB.xcon)
+					summary_str = [summary_str,sprintf(',%f',SNOB.xcon(i))];
 				else
 					summary_str = [summary_str,sprintf(',%f',nan)];
 				end
 			end
 
-			hdrs = [hdrs,',fsoft'];
-			if length(SNOB.fsoft) > 0
-				summary_str = [summary_str,sprintf(',%f',SNOB.fsoft)];
+			hdrs = [hdrs,',fcon'];
+			if length(SNOB.fcon) > 0
+				summary_str = [summary_str,sprintf(',%f',SNOB.fcon)];
 			else
 				summary_str = [summary_str,sprintf(',%f',nan)];
 			end

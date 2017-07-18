@@ -2,13 +2,13 @@ classdef snobclass < handle
 
 	properties (Hidden = true, SetAccess = private)
 		uncert;			% Uncertainty in f
-		xsoft;			% coordinates that satisfy soft condition and give best f
-		fsoft;      	% soft merit value at best feasible point
+		xcon;			% coordinates that satisfy constraints and give best f
+		fcon;      	% constraint merit value at best feasible point
 		next;			% next points to investigate
 		created;	    % date and time the experiment was created
-		softstart = 0;	% number of calls after which soft method started (only applies to combo)
-		f0 = Inf;		% initial feasible value for soft merit function
-		Delta = Inf;	% scaling parameter for soft merit function
+		conStart = 0;	% number of calls after which constrained method started (only applies to combo)
+		f0 = Inf;		% initial feasible value for constraint merit function
+		Delta = Inf;	% scaling parameter for constraint merit function
 	end
 
 	properties (Hidden = true, SetObservable, AbortSet)
@@ -28,8 +28,8 @@ classdef snobclass < handle
 	properties (Hidden = true, SetAccess = ?snobfitclass.snobHandler)
 		x;			% Points investigated
 		f;			% Value of fcn at points investigated
-		F;			% Value of soft fcn at points investigated
-		fm;			% soft snobfit merit function
+		F;			% Value of constraint fcn at points investigated
+		fm;			% constrained snobfit merit function
 		xVirt;		% Virtual Points investigated (only for linked)
 		n;			% Number of experiment parameters (dimension of problem)
 		ncall0;		% Number times snobfit has been called
@@ -38,15 +38,15 @@ classdef snobclass < handle
 	end
 
 	properties (Hidden = true)
-		file = 'oxcba3D';	% Working file for snobfit minimisation
+		file = 'working';	% Working file for snobfit minimisation
 		nreq;				% Number of points requested from snobfit
 		p;
 		npoint;				% Number of starting points
 		threshold = 1e-3;	% threshold for terminating minimisation
 		xstart;				% User defined starting point
-		F_lower;			% Lower Bounds for soft constraint function
-		F_upper;			% Upper Bounds for soft constraint function
-		sigma;				% slope for soft merit function
+		F_lower;			% Lower Bounds for constraint function
+		F_upper;			% Upper Bounds for constraint function
+		sigma;				% slope for constrained merit function
 		fbestHistory; 		% history of fbest for each call to snobfit
 		ncallNoChange = 5; 	% number of same function values before terminating
 		minCalls;			% minimum number of calls before terminating
@@ -56,13 +56,13 @@ classdef snobclass < handle
 	end
 
 	properties (SetObservable, AbortSet)
-		name;				% Experiment name
-		fcn;				% Target function for minimisation
-		softfcn;			% Soft constraint function
-		linked = false;		% User-defined constraints, x and y linked
-		soft = false;		% Using soft snobfit or not
-		continuing = false;	% If this is continuing an old file or not
-		combo = false;		% if it is using a combination of soft and hard snobfit
+		name;					% Experiment name
+		fcn;					% Target function for minimisation
+		constraintFcn;			% constraint function
+		linked = false;			% User-defined constraints, x and y linked
+		constrained = false;	% Using constraints or not
+		continuing = false;		% If this is continuing an old file or not
+		combo = false;			% if it is using a combination of constrained and unconstrained snobfit
 	end
 
 	properties (SetAccess = ?snobfitclass.snobHandler)
@@ -91,7 +91,7 @@ classdef snobclass < handle
 		saveExp(SNOB)
 		plotBounds(SNOB)
 		runsnob(SNOB)
-		runsoft(SNOB)
+		runconstrained(SNOB)
 		runcombo(SNOB)
 
 		function SNOB = snobclass(varargin)
@@ -107,7 +107,7 @@ classdef snobclass < handle
 			p = inputParser;
 			p.addOptional('fcn','none',@(x) any(strcmp(x,fcn_list)));
 			p.addOptional('continuing',false, @(x) islogical(x));
-			p.addOptional('soft', false, @(x) islogical(x));
+			p.addOptional('constrained', false, @(x) islogical(x));
 			p.addOptional('linked',false, @(x) islogical(x));
 			p.addParamValue('name','untitled',@isstr);
 			
@@ -115,7 +115,7 @@ classdef snobclass < handle
 			settings = p.Results;
 
 			SNOB.fcn = settings.fcn;
-			SNOB.softfcn = SNOB.fcn;
+			SNOB.constraintFcn = SNOB.fcn;
 
 			SNOB.uncert = 0.2;
 			SNOB.p = 0.3;
@@ -134,15 +134,15 @@ classdef snobclass < handle
 
 			SNOB.continuing = settings.continuing;
 
-			if any(strcmp(varargin,'soft'))
-				SNOB.soft = settings.soft;
+			if any(strcmp(varargin,'constrained'))
+				SNOB.constrained = settings.constrained;
 			end
 
 			if any(strcmp(varargin,'linked'))
 				SNOB.linked = settings.linked;
 			end
 
-			if SNOB.soft
+			if SNOB.constrained
 				SNOB.sigma = 0.05.*25.*ones(length(SNOB.F_lower),1);
 			end
 
