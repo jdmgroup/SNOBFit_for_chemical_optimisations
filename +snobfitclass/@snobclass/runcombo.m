@@ -40,7 +40,14 @@ function runcombo(SNOB)
 
         % evaluate objective and constraint functions
         f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);
+    	if size(f, 2) > size(f, 1)
+			error('Your objective function must return a column vector, it is returning a row vector or a scalar')
+		end
+
         F = feval(['snobfitclass.confcn.',SNOB.constraintFcn],SNOB);
+        if size(F, 2) == SNOB.npoint
+			error('Each constraint must be returned as a column in F, you have returned them as rows')
+		end
 
         % store values
         SNOB.x = x;

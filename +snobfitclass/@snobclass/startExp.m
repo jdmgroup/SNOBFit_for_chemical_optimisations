@@ -19,6 +19,8 @@ function startExp(SNOB)
 			error('You have not set the upper and lower limits of your constraints')
 		elseif isempty(SNOB.sigma)
 			error('You have not set the value for sigma')
+		elseif size(SNOB.sigma, 2) > size(SNOB.sigma, 1)
+			error('sigma must be a column vector, but it is a row vector at the moment')
 		end
 	end
 

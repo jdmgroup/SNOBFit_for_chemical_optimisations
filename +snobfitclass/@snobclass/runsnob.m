@@ -37,6 +37,10 @@ function runsnob(SNOB)
 		SNOB.next = x;
 
 		f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);		% Evaluate fcn at x
+		if size(f, 2) > size(f, 1)
+			error('Your objective function must return a column vector, it is returning a row vector or a scalar')
+		end
+
 		f(:,2) = SNOB.uncert;		% Add uncertainty column
 
 		SNOB.x = x;					% Store investigated points and values
@@ -87,6 +91,7 @@ function runsnob(SNOB)
 
 		% Evaluate function at recommmended points, and store info
 		f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);
+
 		f(:,2) = SNOB.uncert;
 
 		SNOB.x = [SNOB.x;x];
