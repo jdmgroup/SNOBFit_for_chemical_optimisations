@@ -244,9 +244,9 @@ snobfit_object.threshold = 0.001;          % threshold for termination
 snobfit_object.ncall = 100;                % maximum number of objective function evaluations
 ```
 
-If you are running a constrained optimisation, there is an additional check to make sure the point(s) that satisfy the termination criterion also satisfy the constraints. If an objective function value below the threshold is found that does not satisfy the constraints, the optimisation will continue.
+If you are running a constrained optimisation, there is an additional check to make sure the point(s) that satisfy the termination criterion also satisfy the constraints. If an objective value smaller than the threshold is found under conditions that do not satisfy the constraints, the optimisation will continue.
 
-Another termination criterion is **'no_change'**. This ends the optimisation if there has been no change in the best objective function value for a set number of calls to the SNOBFit algorithm. There is a chance that this may terminate the optimisation too early, so you can also set a minimum number of objective function evaluations before checking for a change:
+Another termination criterion is **'no_change'**. This ends the optimisation if there has been no change in the best objective function value for a set number of calls to the SNOBFit algorithm. There is a chance that applying this criterion may cause the optimisation to terminate too early, so you can also set a minimum number of objective function evaluations before checking for a change:
 ```
 snobfit_object.termination = 'no_change'; % termination criterion
 snobfit_object.ncallNoChange = 5;         % number of SNOBFit calls without a change before terminating
