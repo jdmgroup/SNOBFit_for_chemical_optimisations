@@ -77,7 +77,7 @@ In this example:
 
 ### Naming Your Function Files
 
-**In accordance with Matlab convention, each function file should be given the same name as the function name specified in the first line of code**. For example, both functions above should be saved as **hsf18.m**. (It is not a requirement that the objective and constraint functions/files have the same name, but for clarity they should be named in a way that makes it obvious they are paired, e.g. **hsf18_obj** and **hsf18_con**). You must save *objective* functions in the **+objfcn** folder and *constraint* functions in the **+confcn** folder. (Having separate folders for the two types of function avoids conflicts when using the same function/file names for a pair of objective and constraint functions).
+**In accordance with Matlab convention, each function file should be given the same name as the function name specified in the first line of code**. For example, both functions above should be saved as **hsf18.m**. (It is not a requirement that the objective and constraint functions have the same name, but for clarity they should be named in a way that makes it obvious they are paired, e.g. "hsf18_obj" and "hsf18_con"). You must save *objective* functions in the **+objfcn** folder and *constraint* functions in the **+confcn** folder. (Having separate folders for the two types of function avoids conflicts when using the same function/file names for a pair of objective and constraint functions).
 
 You need to supply the names of the objective and constraint functions to your SNOBFit object as follows:
 ```
@@ -97,7 +97,7 @@ Most chemical optimisations are examples of multiobjective optimisation problems
 For instance, suppose we wish to maximise the yield of a target molecule, while suppressing the formation of certain unwanted side products. To do this, we would set the yield of our target molecule as our lead property (i.e. the one that we wish to optimise), while asserting that the concentration of certain unwanted side products should not exceed specified values. The lead property is handled by the objective function, while the other properties are handled by the constraint function.
 
 ### Writing Your Chemical Optimisation Files
-Your experimental objective function should take the general form shown below, where *run_reaction* is a function that controls your experimental equipment and launches a sequence of reactions at the conditions specified in SNOB.next. *run_reaction* should return an array containing the values of all relevant properties at each set of reaction conditions. The property values can be stored as a *n*-by-*m* array in SNOB.valuesToPass, where *n* is the number of experiments and *m* is the number of output properties. In the code below we have assumed that values for the lead property are stored in the first column of output_properties. Hence, the objective function returns the first column of output_properties when called.
+Your experimental objective function should take the general form shown below, where *run_reaction* is a function that controls your experimental equipment and launches a sequence of reactions at the conditions specified in SNOB.next. *run_reaction* should return an array containing the values of all relevant properties at each set of reaction conditions. The property values should be stored as a *n*-by-*m* array in SNOB.valuesToPass (where *n* is the number of experiments and *m* is the number of output properties), allowing them to be retrieved later by the constraint function. In the code below we have assumed that values for the lead property are stored in the first column of output_properties. Hence, the objective function returns the first column of output_properties when called.
 
 ```
 function f = my_objective_function(SNOB)
@@ -105,8 +105,8 @@ function f = my_objective_function(SNOB)
     input_parameter_1 = SNOB.next(:,1);
     input_parameter_2 = SNOB.next(:,2);
 
-    output_properties = run_reaction(input_parameter_1, input_parameter_2);
-    SNOB.valuesToPass = output_properties;
+    output_properties = run_reaction(input_parameter_1, input_parameter_2); %output_properties is a nxm array of property values, where each row corresponds to a different set of input parameters and each column corresponds to a different property 
+    SNOB.valuesToPass = output_properties; %store the property values for subsequent retrieval by the constraint function
     
     f = output_properties(:,1); % the first column corresponds to the lead property to minimise
 
@@ -116,9 +116,9 @@ In this example:
 * *input_parameter_1* and *input_parameter_2* represent the first and second reaction parameters, respectively
 * *run_reaction* is a function that takes the input parameters as an argument, performs **sequential reactions** and returns a *n*-by-*m* array of required output properties, where *n* is the number of experiments and *m* is the number of output properties
 * the output property values are stored in SNOB.valuesToPass, allowing them to be subsequently retrieved by the constraint function
-* the objective function as written above is configured to minimise output_properties(:,1)
+* the objective function as written above is configured to **minimise** output_properties(:,1)
 
-**Note: SNOBFit is configured to minimise the lead property. If you wish to maximise the lead property, then you would minimise the negative of the lead, property by writing f = -output_properties(:,1); %
+**Note: SNOBFit is configured to minimise the lead property. If you wish to maximise the lead property, this can be achieved by minimising the negative of the lead property by writing f = -output_properties(:,1);
 
 In '*Tuning Reaction Products by Constrained Optimisation*' we optimised a cascadic synthesis with four competing products: X0, X1, X2, and X3. For instance, Run IV involved minimising [X3] (our lead property), while setting a minimum value of 90 % for [X1+X2] = [X1] + [X2] (our first constrained property) and a maximum value of 0.5 for the ratio R = [X1]/[X2] (our second constrained property) where [X] signifies the mole fraction of X in the sample.
 
@@ -139,7 +139,7 @@ function f = my_objective_function(SNOB)
 
     mole_fractions = run_reactor(flow_rate1, flow_rate2, temperature); % perform experiments and return corresponding mole_fractions
 
-    X3 = mole_fractions(:,4);   % lead property is mole fraction of X3 stored in column four of mole_fractions
+    X3 = mole_fractions(:,4);   % lead property to be minimised is mole fraction of X3 (which is stored in column four of mole_fractions)
 
     f = X3;
     
@@ -163,9 +163,9 @@ function F = my_constraint_function(SNOB)
 end
 ```
 
-### Setting The Constraints
+### Setting The Limits on the Constrained Properties
 
-The values of the constraints for each constrained property should be set after creating a SNOBFit object in MATLAB, and before running the experiment.
+The limits for each constrained property should be set after creating a SNOBFit object in MATLAB, and before running the experiment.
 
 To set up your SNOBFit object for the above optimisation type:
 ```
@@ -192,7 +192,7 @@ SNOBFIT treats the bounds specified in *F_lower* and *F_upper* as "preferred lim
 ```
 snobfit_object.sigma = [0.3; 0.3]
 ```
-Here we have set &#963; to the same value of 0.3 for both constraints, but you can chose any values that suit your purpose. The simplest way to choose the &#963; values is to set them equal to the maximum tolerable violation of each constraint. For our example, for the example given, our choice of &#963; values would mean that we could tolerate anything down to 0.6 for [X1+X2] (*F_lower* - &#963;), and anything up to 0.8 for R (*F_upper* + &#963;). The order of the elements in snobfit_object.sigma must match the column order of *F*.
+Here we have set &#963; to the same value of 0.3 for both constraints, but you can chose any values that suit your purpose. The simplest way to choose the &#963; values is to set them equal to the maximum tolerable violation of each constraint. For the example given, our choice of &#963; values would mean that we could tolerate anything down to 0.6 for [X1+X2] (*F_lower* - &#963;), and anything up to 0.8 for R (*F_upper* + &#963;). The order of the elements in snobfit_object.sigma must match the column order of *F*.
 
 ### Setting Bounds on the Input Parameters
 
