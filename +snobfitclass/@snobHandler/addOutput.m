@@ -16,4 +16,5 @@ function addOutput(SNOB)
 	addlistener(SNOB, 'filepath', 'PostSet', @(src,event)snobfitclass.snobHandler.checkPath(SNOB,src,event));
 	addlistener(SNOB, 'name', 'PostSet', @(src,event)snobfitclass.snobHandler.loadPrevious(SNOB,src,event));
 	addlistener(SNOB, 'continuing', 'PostSet', @(src,event)snobfitclass.snobHandler.loadPrevious(SNOB,src,event));
+	addlistener(SNOB, 'sigma', 'PostSet', @(src,event)snobfitclass.snobHandler.setConstraintSlopes(SNOB,src,event));
 end
