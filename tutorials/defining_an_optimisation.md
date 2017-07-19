@@ -49,13 +49,13 @@ In this example:
 * Since we are carrying out a 2D optimisation SNOB.next has two columns, one for each input parameter
 * For clarity, the input parameters have been unpacked from SNOB.next and assigned to *x1* and *x2*
 * There is a single output property *f* that we wish to minimise
-* The objective function returns a 1D array *f*, where the *i*-th element *f*(*i* ) contains the function value at [*x1*(*i* ),*x2*(*i* )]
+* The objective function returns a 1D array *f*, where the *i*-th element *f*(*i* ) holds the function value at [*x1*(*i* ), *x2*(*i* )]
 
 ### Writing a Constraint Function for a Mathematical Optimisation
 
-You will use a single MATLAB function to define all constraints. Your constraint MATLAB function must:
+A single MATLAB function is used to define all constraints. Your constraint MATLAB function must:
 * Take a SNOBFit object as its only argument
-* Return the values of all the constraint functions as a single *n*-by-*m* array, where *n* is the number of experiments (rows) and *m* is the number of constraints (columns)
+* Return the values of all the constrained properties as a single *n*-by-*m* array, where *n* is the number of experiments (rows) and *m* is the number of constraints (columns)
 
 An example:
 ```
@@ -70,16 +70,14 @@ function F = hsf18(SNOB)
 end
 ```
 In this example:
-* There are two constraints
 * SNOB is the SNOBFit object
+* There are two constraints
 * The two input parameters have again been unpacked from SNOB.next as x1 and x2
 * Each constraint is evaluated and stored as a separate column of the 2D-array *F*
 
 ### Naming Your Function Files
 
-**The file name of your objective or constraint function must be given the same name as the function**. For example, both functions above should be saved as **hsf18.m**.
-
-You must save *objective* functions in the **+objfcn** folder and *constraint* functions in the **+confcn** folder. In this way, the function and file names for a pair of objective and constraint functions may be the same without causing any conflicts.
+**In accordance with Matlab convention, each function file should be given the same name as the function name specified in the first line of code**. For example, both functions above should be saved as **hsf18.m**. (It is not a requirement that the objective and constraint functions/files have the same name, but for clarity they should be named in a way that makes it obvious they are paired, e.g. **hsf18_obj** and **hsf18_con**). You must save *objective* functions in the **+objfcn** folder and *constraint* functions in the **+confcn** folder. (Having separate folders for the two types of function avoids conflicts when using the same function/file names for a pair of objective and constraint functions).
 
 You need to supply the names of the objective and constraint functions to your SNOBFit object as follows:
 ```
@@ -93,8 +91,10 @@ To run the optimisation, you should follow the steps described in *using_constra
 ## Defining a Chemical (or Blackbox) Optimisation
 The instructions provided above include all of the information needed to define a mathematical optimisation problem, in which the objective function and constraint functions are known algebraic functions of the input parameters. Chemical optimisation is an example of blackbox optimisation, in which we do not know the functional dependence of the output properties on the input parameters, and so we must carry out an experiment to determine the output properties for a given set of input parameters. Blackbox optimisation is handled in a slightly different manner to mathematical optimisation as described below.
 
-### Formulating the Chemical Optimisation
-Most chemical optimisations are examples of multiobjective optimisation problems, in which we wish to find an acceptable compromise between  several criteria, e.g. maximising the yield of a target molecule while minimising the formation of certain unwanted side products. As described in our article '*Tuning Reaction Products by Constrained Optimisation*', this may be conveniently achieved by framing the problem as a constrained optimisation, in which we optimise a lead property subject to constraints being placed on the values that the other properties may attain. For instance, we might set the yield of our target molecule as our lead property (that we wish to maximise) while asserting that the concentration of certain unwanted side products should not exceed specified values. The lead property is handled by the objective function, while the other properties are handled by the constraint function.
+### Formulating a Chemical Optimisation
+Most chemical optimisations are examples of multiobjective optimisation problems, in which we wish to find an acceptable compromise between  several criteria. As described in our article '*Tuning Reaction Products by Constrained Optimisation*', this may be conveniently achieved by framing the problem as a constrained optimisation, in which we optimise a lead property subject to constraints being placed on the values that the other properties may attain. For the purposes of this discussion, a "property" is anything that we can measure or calculate and wish to control. The only requirement is that the property can be expressed as a scalar quantity, i.e. a single number. Example properties include: the concentration of a product or side-product (measured), the mean crystal size in a colloidal dispersion (measured), the average chain length in a polymer solution (measured), or the total cost of reagents for the specific reaction conditions chosen (calculated).
+
+For instance, suppose we wish to maximise the yield of a target molecule, while suppressing the formation of certain unwanted side products. To do this, we would set the yield of our target molecule as our lead property (i.e. the one that we wish to optimise), while asserting that the concentration of certain unwanted side products should not exceed specified values. The lead property is handled by the objective function, while the other properties are handled by the constraint function.
 
 ### Writing Your Chemical Optimisation Files
 Your experimental objective function should take the general form shown below, where *run_reaction* is a function that controls your experimental equipment and launches a sequence of reactions at the conditions specified in SNOB.next. *run_reaction* should return an array containing the values of all relevant properties at each set of reaction conditions. The property values can be stored as a *n*-by-*m* array in SNOB.valuesToPass, where *n* is the number of experiments and *m* is the number of output properties. In the code below we have assumed that values for the lead property are stored in the first column of output_properties. Hence, the objective function returns the first column of output_properties when called.
@@ -117,6 +117,8 @@ In this example:
 * *run_reaction* is a function that takes the input parameters as an argument, performs **sequential reactions** and returns a *n*-by-*m* array of required output properties, where *n* is the number of experiments and *m* is the number of output properties
 * the output property values are stored in SNOB.valuesToPass, allowing them to be subsequently retrieved by the constraint function
 * the objective function as written above is configured to minimise output_properties(:,1)
+
+**Note: SNOBFit is configured to minimise the lead property. If you wish to maximise the lead property, then you would minimise the negative of the lead, property by writing f = -output_properties(:,1); %
 
 In '*Tuning Reaction Products by Constrained Optimisation*' we optimised a cascadic synthesis with four competing products: X0, X1, X2, and X3. For instance, Run IV involved minimising [X3] (our lead property), while setting a minimum value of 90 % for [X1+X2] = [X1] + [X2] (our first constrained property) and a maximum value of 0.5 for the ratio R = [X1]/[X2] (our second constrained property) where [X] signifies the mole fraction of X in the sample.
 
