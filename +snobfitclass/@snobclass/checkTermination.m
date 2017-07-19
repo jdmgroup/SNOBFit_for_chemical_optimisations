@@ -11,9 +11,9 @@ function flag = checkTermination(SNOB)
 				% Check that the global minimum has been found,
 				% and the constraints are satisfied
 				in_lower = min(SNOB.F' - repmat(SNOB.F_lower,1,length(SNOB.F)) +...
-								  repmat(SNOB.sigma,1,length(SNOB.F)))';
+								  repmat(SNOB.sigmaLower,1,length(SNOB.F)))';
 				in_upper = min(repmat(SNOB.F_upper,1,length(SNOB.F)) +...
-								  repmat(SNOB.sigma,1,length(SNOB.F))- SNOB.F')';
+								  repmat(SNOB.sigmaUpper,1,length(SNOB.F))- SNOB.F')';
 
 				feasible_points = find(SNOB.f <= SNOB.fglob & in_lower >= 0 & in_upper >= 0);
 				if ~isempty(feasible_points)
