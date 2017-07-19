@@ -49,7 +49,7 @@ In this example:
 * Since we are carrying out a 2D optimisation SNOB.next has two columns, one for each input parameter
 * For clarity, the input parameters have been unpacked from SNOB.next and assigned to *x1* and *x2*
 * There is a single output property *f* that we wish to minimise
-* The objective function returns a 1D array *f*, where the *i*th element *f*(*i*) contains the function value at (*x1*(*i*),*x2*(*i*))
+* The objective function returns a 1D array *f*, where the *i*-th element *f*(*i* ) contains the function value at [*x1*(*i* ),*x2*(*i* )]
 
 ### Writing a Constraint Function for a Mathematical Optimisation
 
