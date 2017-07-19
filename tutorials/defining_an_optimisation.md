@@ -29,7 +29,7 @@ The important folders for defining your own custom optimisation are **+objfcn** 
 
 Your objective function must:
 * Take a SNOBFit object (an instance of the SNOBFit class) as its only argument
-* Return a 1D array of objective function values at each set of input parameters, where each cell of the output array corresponds to the function value at the input parameters specified in the corresponding row of SNOB.next.
+* Return a 1D array of objective function values, with each cell of the output array corresponding to the function value obtained using the input parameters specified in the corresponding row of SNOB.next.
 
 An example objective function from the SNOBFit package is the *hsf18* 2D surface in **+objfcn**:
 ```
@@ -49,7 +49,7 @@ In this example:
 * Since we are carrying out a 2D optimisation SNOB.next has two columns, one for each input parameter
 * For clarity, the input parameters have been unpacked from SNOB.next and assigned to *x1* and *x2*
 * There is a single output property *f* that we wish to minimise
-* The objective function returns a 1D array *f*, where the *i*th element *f(i)* contains the function value at (*x1(i)*,*x2(i)*)
+* The objective function returns a 1D array *f*, where the *i*th element *f*(*i*) contains the function value at (*x1*(*i*),*x2*(*i*))
 
 ### Writing a Constraint Function for a Mathematical Optimisation
 
