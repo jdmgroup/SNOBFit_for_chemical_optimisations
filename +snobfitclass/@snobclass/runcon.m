@@ -58,7 +58,8 @@ function runcon(SNOB)
 
 	SNOB.Delta = median(abs(f - SNOB.f0));
 	for i = 1:SNOB.npoint
-		fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
+		fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
+							SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
 	end
 	fm(:,2) = sqrt(eps);
 
@@ -101,7 +102,8 @@ function runcon(SNOB)
 
 		fm = zeros(size(f));
 		for i = 1:SNOB.nreq
-			fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
+			fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
+								SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
 		end
 		fm(:,2) = sqrt(eps);
 
@@ -129,7 +131,8 @@ function runcon(SNOB)
 
 				fm = zeros(K,1);
 				for i = 1:K
-					fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
+					fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
+										SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
 				end
 				fm(:,2) = sqrt(eps);
 
