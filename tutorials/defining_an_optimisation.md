@@ -35,8 +35,8 @@ An example objective function from the SNOBFit package is the *hsf18* 2D surface
 ```
 function f = hsf18(SNOB)
 
-    x1 = SNOB.next(:,1);      % x1 is a 1D array for the first input parameter
-    x2 = SNOB.next(:,2);      % x2 is a 1D array for the second input parameter
+    x1 = SNOB.next(:,1);      % x1 is a 1D array (column vector) for the first input parameter
+    x2 = SNOB.next(:,2);      % x2 is a 1D array (column vector) for the second input parameter
 
     f = 0.01*x1.^2 + x2.^2;   % f is a 1D array of objective function values
 
@@ -105,7 +105,7 @@ function f = my_objective_function(SNOB)
     input_parameter_1 = SNOB.next(:,1);
     input_parameter_2 = SNOB.next(:,2);
 
-    output_properties = run_reaction(input_parameter_1, input_parameter_2); %output_properties is a nxm array of property values, where each row corresponds to a different set of input parameters and each column corresponds to a different property 
+    output_properties = run_reaction(input_parameter_1, input_parameter_2); %output_properties is a n x m array of property values, where each row corresponds to a different set of input parameters and each column corresponds to a different property 
     SNOB.valuesToPass = output_properties; %store the property values for subsequent retrieval by the constraint function
     
     f = output_properties(:,1); % the first column corresponds to the lead property to minimise
@@ -118,7 +118,7 @@ In this example:
 * the output property values are stored in SNOB.valuesToPass, allowing them to be subsequently retrieved by the constraint function
 * the objective function as written above is configured to **minimise** output_properties(:,1)
 
-**Note: SNOBFit is configured to minimise the lead property. If you wish to maximise the lead property, this can be achieved by minimising the negative of the lead property by writing f = -output_properties(:,1);
+**Note: SNOBFit is configured to minimise the lead property. If you wish to maximise the lead property, this can be achieved by minimising the negative of the lead property by writing f = -output_properties(:,1);**
 
 In '*Tuning Reaction Products by Constrained Optimisation*' we optimised a cascadic synthesis with four competing products: X0, X1, X2, and X3. For instance, Run IV involved minimising [X3] (our lead property), while setting a minimum value of 90 % for [X1+X2] = [X1] + [X2] (our first constrained property) and a maximum value of 0.5 for the ratio R = [X1]/[X2] (our second constrained property) where [X] signifies the mole fraction of X in the sample.
 
@@ -154,8 +154,8 @@ function F = my_constraint_function(SNOB)
 
     mole_fractions = SNOB.valuesToPass; % retrieve mole fractions from SNOB object
 
-    X1 = mole_fractions(:,1);
-    X2 = mole_fractions(:,2);
+    X1 = mole_fractions(:,2); %X1 is stored in second column of mole_fractions
+    X2 = mole_fractions(:,3); %X2 is stored in third column of mole_fractions
 
     F(:,1) = X1 + X2; % calculate first constrained property
     F(:,2) = X1 / X2; % calculate second constrained property
@@ -177,18 +177,18 @@ snobfit.constrained = true; %specify problem as a constrained optimisation; if s
 ```
 The values of the constraints are then set as *upper* and *lower* limits on each of the constraint functions:
 ```
-snobfit_object.F_upper = [inf; 0.5];
-snobfit_object.F_lower = [0.9; 0];
+snobfit_object.F_upper = [1.0; 0.5];
+snobfit_object.F_lower = [0.9; 0.0];
 ```
 In this example:
 *  *snobfit_object.F_upper* stores the *upper limits* for each constrained property
 *  *snobfit_object.F_lower* stores the *lower limits* for each constrained property
-*  Both are *1*-by-*n* arrays, where *n* is the number of constrained properties
+*  Both are *n*-by-*1* arrays, where *n* is the number of constrained properties
 *  The order of the elements in *F_lower* and *F_upper* must match the column order of *F*
 *  The first column of *F* corresponds to [X1+X2]. Hence the first elements of *F_lower* and *F_upper* must correspond to the limits on [X1+X2]
 *  The second column of *F* corresponds to R. Hence the second elements of *F_lower* and *F_upper* must correspond to the limits on R
 
-SNOBFIT treats the bounds specified in *F_lower* and *F_upper* as "preferred limits" that can be partially violated if this leads to a better solution, i.e. one with a lower merit value. The extent to which the preferred bounds may be violoated is specified using the &#963; parameter:
+SNOBFIT treats the bounds specified in *F_lower* and *F_upper* as "preferred limits" that can be partially violated if this leads to a better solution, i.e. one with a lower merit value. The extent to which the preferred bounds may be violated is specified using the &#963; parameter:
 ```
 snobfit_object.sigma = [0.3; 0.3]
 ```
@@ -212,7 +212,7 @@ In this example:
 
 #### Linked Bounds
 
-If you are using a flow reactor, it is frequently necessary to set limits on the total flow-rate of reagents and the ratio of those flow rates: if the total flow-rate is too low, the reaction will take too long; if the total flow-rate is too high or the individual flow rates are too different, the flow may become unstable. For an optimisation in which we are varying two flow rates, this results in a trapezoidal boundary that cannot be directly handled by SNOBFit (see our article for further details). To allow SNOBFit to handle the trapezoidal constraints, we use a spatial transformation that converts the trapezoidal boundary into a rectangular one that can be handled by SNOBFit. This is done automatically by following the procedure described below. **In its current implementation the method works for two reagent flow rates only, plus a third (optional) unlinked reaction condition**.
+If you are using a flow reactor, it is frequently necessary to set limits on the total flow-rate of reagents and the ratio of those flow rates: if the total flow-rate is too low, the reaction will take too long; if the total flow-rate is too high or the individual flow rates are too different, the flow may become unstable. For an optimisation in which we are varying two flow rates, applying limits on the total flow rate and the flow rate ratio results in a trapezoidal boundary that cannot be directly handled by SNOBFit (see our article for further details). To allow SNOBFit to handle the trapezoidal constraints, we use a spatial transformation that converts the trapezoidal boundary into a rectangular one that can be handled by SNOBFit. This is done automatically by following the procedure described below. **In its current implementation the method works for two reagent flow rates only, plus a third (optional) unlinked reaction condition**.
 
 To use linked reaction conditions, you need to change the property on the SNOBFit object:
 ```
