@@ -194,6 +194,12 @@ snobfit_object.sigma = [0.3; 0.3]
 ```
 Here we have set &#963; to the same value of 0.3 for both constraints, but you can chose any values that suit your purpose. The simplest way to choose the &#963; values is to set them equal to the maximum tolerable violation of each constraint. For the example given, our choice of &#963; values would mean that we could tolerate anything down to 0.6 for [X1+X2] (*F_lower* - &#963;), and anything up to 0.8 for R (*F_upper* + &#963;). The order of the elements in snobfit_object.sigma must match the column order of *F*.
 
+You can also set different values of &#963; for the upper and lower limits of each constraint. If we wanted to do this for the above example:
+```
+snobfit_object.sigmaUpper = [0.3; 0.3];
+snobfit_object.sigmaLower = [0.1; 0.1];
+```
+
 ### Setting Bounds on the Input Parameters
 
 SNOBFit is a bounded optimisation algorithm, which means you must specify upper and lower limits for each input parameter. This makes it a good fit for chemical optimisations, where the range of usable reaction conditions is typically limited due to physical limitations. For instance, in a flow-based reaction, the boiling point of a solvent places an upper limit on the reaction temperature. It may sometimes be the case that you know from previous experience the range of conditions within which the optimium lies, meaning you should limit your search to include this range only.
