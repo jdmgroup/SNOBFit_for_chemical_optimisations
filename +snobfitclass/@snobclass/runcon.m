@@ -45,7 +45,7 @@ function runcon(SNOB)
 	end
 
 	F = feval(['snobfitclass.confcn.',SNOB.constraintFcn],SNOB);
-	if size(F, 2) == SNOB.npoint
+	if size(F, 1) ~= SNOB.npoint && size(F, 2) ~= length(SNOB.F_upper)
 		error('Each constraint must be returned as a column in F, you have returned them as rows')
 	end
 
