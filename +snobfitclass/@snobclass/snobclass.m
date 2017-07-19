@@ -74,7 +74,7 @@ classdef snobclass < handle
 		fbest;			% Lowest value of f so far
 		xbest;			% Coordinates of lowest value so far
 		ncall = 100;	% Limit of calls to snobfit
-		termination = 'minimised' % termination criteria --> 'minimised', 'no_change', 'n_runs' 
+		termination = 'n_runs' % termination criteria --> 'minimised', 'no_change', 'n_runs' 
 	end
 
 	events
