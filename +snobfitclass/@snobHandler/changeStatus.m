@@ -8,6 +8,10 @@ function changeStatus(SNOB)
 		case 'complete'
 			if SNOB.minimised
 				fprintf('SNOBFIT experiment has finished, and a minimum was found!\r\n');
+			elseif strcmp(SNOB.termination, 'n_runs')
+				fprintf('SNOBFIT experiment finished after ')
+				fprintf('%d', SNOB.ncall0)
+				fprintf(' function evaluations!\r\n');
 			else
 				fprintf('SNOBFIT experiment has finished, ')
 				fprintf(2,'BUT NO MIMIMUM WAS FOUND :(\r\n');

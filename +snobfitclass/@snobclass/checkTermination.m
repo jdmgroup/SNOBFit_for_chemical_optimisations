@@ -7,18 +7,18 @@ function flag = checkTermination(SNOB)
 	switch SNOB.termination
 		case 'minimised'
 		% when the algorithm finds a minumum point, which is different depending on the method
-			if SNOB.soft | SNOB.combo
+			if SNOB.constrained | SNOB.combo
 				% Check that the global minimum has been found,
-				% and the soft constraint is satisfied
-				in_lower = min(SNOB.F' - repmat(SNOB.F1,1,length(SNOB.F)) +...
+				% and the constraints are satisfied
+				in_lower = min(SNOB.F' - repmat(SNOB.F_lower,1,length(SNOB.F)) +...
 								  repmat(SNOB.sigma,1,length(SNOB.F)))';
-				in_upper = min(repmat(SNOB.F2,1,length(SNOB.F)) +...
+				in_upper = min(repmat(SNOB.F_upper,1,length(SNOB.F)) +...
 								  repmat(SNOB.sigma,1,length(SNOB.F))- SNOB.F')';
 
-				soft_points = find(SNOB.f <= SNOB.fglob & in_lower >= 0 & in_upper >= 0);
-				if ~isempty(soft_points)
-					SNOB.xsoft = SNOB.x(soft_points, :);
-					SNOB.fsoft = SNOB.fm(soft_points, 1);
+				feasible_points = find(SNOB.f <= SNOB.fglob & in_lower >= 0 & in_upper >= 0);
+				if ~isempty(feasible_points)
+					SNOB.xcon = SNOB.x(feasible_points, :);
+					SNOB.fcon = SNOB.fm(feasible_points, 1);
 					flag = 1;
 				end
 
@@ -47,26 +47,26 @@ function flag = checkTermination(SNOB)
 
 			if any(count >= SNOB.ncallNoChange)
 				flag = 1;
-				if SNOB.soft | SNOB.combo
+				if SNOB.constrained | SNOB.combo
 	
-					delta = max(0,max(repmat(SNOB.F1',SNOB.ncall0,1) - SNOB.F, SNOB.F - repmat(SNOB.F2',SNOB.ncall0,1))./repmat(SNOB.sigma',SNOB.ncall0,1));%'
+					delta = max(0,max(repmat(SNOB.F_lower',SNOB.ncall0,1) - SNOB.F, SNOB.F - repmat(SNOB.F_upper',SNOB.ncall0,1))./repmat(SNOB.sigma',SNOB.ncall0,1));%'
 					feasible_points = find(max(delta,[],2) <= 1);
 					if ~isempty(feasible_points)
-						[fsoft, isoft] = min(SNOB.fm(feasible_points));
-						SNOB.xsoft = SNOB.x(isoft,:);
+						[fcon, icon] = min(SNOB.fm(feasible_points));
+						SNOB.xcon = SNOB.x(icon,:);
 					else
 						delta0 = sum(delta.^2,2);
-						[mindelta,isoft] = min(delta0);
-						SNOB.xsoft = SNOB.x(isoft,:);
+						[mindelta,icon] = min(delta0);
+						SNOB.xcon = SNOB.x(icon,:);
 
-						disp('WARNING: No soft feasible point has been found')
-  						disp('xsoft is the point with smallest constraint violation sum(delta_i^2');
+						disp('WARNING: No feasible point has been found')
+  						disp('xcon is the point with smallest constraint violation sum(delta_i^2');
 					end
 				end
 
 			end
 		case 'n_runs'
-		% not really necessary to add this in, but its nice emphasise what it does
+		
 			if SNOB.ncall0 >= SNOB.ncall
 				flag = 1;
 			end

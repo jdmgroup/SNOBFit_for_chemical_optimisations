@@ -1,4 +1,4 @@
-function runsoft(SNOB)
+function runcon(SNOB)
 
 	import snobfitclass.snobfcn.*
 
@@ -14,12 +14,17 @@ function runsoft(SNOB)
 	SNOB.ncall0 = 0;
 	change = 0;
 
-	x = rand(SNOB.npoint-1,SNOB.n);
-	x = x*diag(SNOB.v - SNOB.u) + ones(SNOB.npoint-1,1)*SNOB.u';
-	x = [SNOB.xstart;x];
+	if isempty(SNOB.xstart)
+		x = rand(SNOB.npoint,SNOB.n);
+		x = x*diag(SNOB.x_upper - SNOB.x_lower) + ones(SNOB.npoint,1)*SNOB.x_lower';
+	else
+		x = rand(SNOB.npoint-1,SNOB.n);
+		x = x*diag(SNOB.x_upper - SNOB.x_lower) + ones(SNOB.npoint-1,1)*SNOB.x_lower';
+		x = [SNOB.xstart;x];
+	end
 
 	for i = 1:SNOB.npoint
-		x(i,:) = snobround(x(i,:),SNOB.u',SNOB.v',SNOB.dx);
+		x(i,:) = snobround(x(i,:),SNOB.x_lower',SNOB.x_upper',SNOB.dx);
 	end
 
 	x_old = x;
@@ -35,9 +40,16 @@ function runsoft(SNOB)
 	SNOB.next = x;
 
 	f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);
-	F = feval(['snobfitclass.confcn.',SNOB.softfcn],SNOB);
+	if size(f, 2) > size(f, 1)
+		error('Your objective function must return a column vector, it is returning a row vector or a scalar')
+	end
 
-	isvalid = find(sum(repmat(SNOB.F1',SNOB.npoint,1) <= F & F <= repmat(SNOB.F2',SNOB.npoint,1)));
+	F = feval(['snobfitclass.confcn.',SNOB.constraintFcn],SNOB);
+	if size(F, 1) ~= SNOB.npoint && size(F, 2) ~= length(SNOB.F_upper)
+		error('Each constraint must be returned as a column in F, you have returned them as rows')
+	end
+
+	isvalid = find(sum(repmat(SNOB.F_lower',SNOB.npoint,1) <= F & F <= repmat(SNOB.F_upper',SNOB.npoint,1)));
 	if ~isempty(isvalid)
 		SNOB.f0 = min(f(isvalid));
 	else
@@ -45,9 +57,8 @@ function runsoft(SNOB)
 	end
 
 	SNOB.Delta = median(abs(f - SNOB.f0));
-
 	for i = 1:SNOB.npoint
-		fm(i,1) = softmerit(f(i),F(i,:),SNOB.F1,SNOB.F2,SNOB.f0,SNOB.Delta,SNOB.sigma);
+		fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
 	end
 	fm(:,2) = sqrt(eps);
 
@@ -57,7 +68,7 @@ function runsoft(SNOB)
 	SNOB.fm = fm(:,1);
 
 	SNOB.ncall0 = SNOB.ncall0 + length(f);
-	params = struct('bounds',{SNOB.u,SNOB.v},'nreq',SNOB.nreq,'p',SNOB.p);
+	params = struct('bounds',{SNOB.x_lower,SNOB.x_upper},'nreq',SNOB.nreq,'p',SNOB.p);
 
 	while stop_condition == 0
 		if SNOB.ncall0 == SNOB.npoint
@@ -68,7 +79,7 @@ function runsoft(SNOB)
 
 			notify(SNOB, 'DataToPlot');
 			notify(SNOB, 'DataToPrint');
-		else
+        else
 			[request,xbest,fbest] = snobfit(working_file, x_old, fm, params);
 		end
 
@@ -86,11 +97,11 @@ function runsoft(SNOB)
 		SNOB.next = x;
 
 		f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);
-		F = feval(['snobfitclass.confcn.',SNOB.softfcn],SNOB);
+		F = feval(['snobfitclass.confcn.',SNOB.constraintFcn],SNOB);
 
 		fm = zeros(size(f));
 		for i = 1:SNOB.nreq
-			fm(i,1) = softmerit(f(i),F(i,:),SNOB.F1,SNOB.F2,SNOB.f0,SNOB.Delta,SNOB.sigma);
+			fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
 		end
 		fm(:,2) = sqrt(eps);
 
@@ -110,7 +121,7 @@ function runsoft(SNOB)
 
 		if SNOB.fbest < 0 & change == 0
 			K = size(SNOB.x,1);
-			ind = find(min(SNOB.F - ones(K,1)*SNOB.F1',[],2) > -eps & min(ones(K,1)*SNOB.F2' - SNOB.F,[],2) > -eps);
+			ind = find(min(SNOB.F - ones(K,1)*SNOB.F_lower',[],2) > -eps & min(ones(K,1)*SNOB.F_upper' - SNOB.F,[],2) > -eps);
 			if ~isempty(ind)
 				change = 1;
 				SNOB.f0 = min(SNOB.f(ind));
@@ -118,11 +129,12 @@ function runsoft(SNOB)
 
 				fm = zeros(K,1);
 				for i = 1:K
-					fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F1,SNOB.F2,SNOB.f0,SNOB.Delta,SNOB.sigma);
+					fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
 				end
 				fm(:,2) = sqrt(eps);
 
-				x = SNOB.x;
+				x_old = SNOB.xVirt;
+				SNOB.fm = fm(:,1);
 			end
 		end
 

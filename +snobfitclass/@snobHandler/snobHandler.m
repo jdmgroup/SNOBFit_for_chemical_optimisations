@@ -5,7 +5,7 @@ classdef snobHandler
 		printOut(SNOB)
 		plotOut(SNOB)
 		changeStatus(SNOB)
-		setConstraints(SNOB,src,event)
+		setLinkedBounds(SNOB,src,event)
 		addOutput(SNOB)
 		initialisation(SNOB,src,event)
 		checkPath(SNOB, src, event)

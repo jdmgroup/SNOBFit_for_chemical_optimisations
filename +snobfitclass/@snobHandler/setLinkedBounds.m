@@ -1,4 +1,4 @@
-function setConstraints(SNOB,src,event)
+function setLinkedBounds(SNOB,src,event)
 	if ~isempty(SNOB.xyMin) & ~isempty(SNOB.xyMax) & ~isempty(SNOB.maxRatio) & ~isempty(SNOB.minRatio)
 		x1 = SNOB.xyMin / (1 + 1/SNOB.maxRatio);
 		y1 = x1 / SNOB.maxRatio;
@@ -13,11 +13,11 @@ function setConstraints(SNOB,src,event)
 		[ux, vx] = snobfitclass.TrapezoidToSquare(SNOB.trapezoid);
 
 		if ~isempty(SNOB.zMin) & ~isempty(SNOB.zMax)			
-			SNOB.u = [min(ux); min(vx); SNOB.zMin];
-			SNOB.v = [max(ux); max(vx); SNOB.zMax];
+			SNOB.x_lower = [min(ux); min(vx); SNOB.zMin];
+			SNOB.x_upper = [max(ux); max(vx); SNOB.zMax];
 		else
-			SNOB.u = [min(ux); min(vx)];
-			SNOB.v = [max(ux); max(vx)];
+			SNOB.x_lower = [min(ux); min(vx)];
+			SNOB.x_upper = [max(ux); max(vx)];
 		end
 	end
 end

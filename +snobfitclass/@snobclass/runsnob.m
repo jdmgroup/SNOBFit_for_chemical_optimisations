@@ -18,10 +18,10 @@ function runsnob(SNOB)
 		SNOB.ncall0 = 0;
 
 		x = rand(SNOB.nreq,SNOB.n);	% Generate random starting points
-		x = x*diag(SNOB.v - SNOB.u) + ones(SNOB.npoint,1)*SNOB.u';	% Map points to parameter range
+		x = x*diag(SNOB.x_upper - SNOB.x_lower) + ones(SNOB.npoint,1)*SNOB.x_lower';	% Map points to parameter range
 
 		for i = 1:SNOB.npoint
-			x(i,:) = snobround(x(i,:),SNOB.u',SNOB.v',SNOB.dx);
+			x(i,:) = snobround(x(i,:),SNOB.x_lower',SNOB.x_upper',SNOB.dx);
 		end
 
 		x_old = x;
@@ -37,6 +37,10 @@ function runsnob(SNOB)
 		SNOB.next = x;
 
 		f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);		% Evaluate fcn at x
+		if size(f, 2) > size(f, 1)
+			error('Your objective function must return a column vector, it is returning a row vector or a scalar')
+		end
+
 		f(:,2) = SNOB.uncert;		% Add uncertainty column
 
 		SNOB.x = x;					% Store investigated points and values
@@ -51,7 +55,7 @@ function runsnob(SNOB)
 		x = SNOB.x;
 	end
 
-	params = struct('bounds',{SNOB.u,SNOB.v},'nreq',SNOB.nreq,'p',SNOB.p);		% Make parameters input for snobfit
+	params = struct('bounds',{SNOB.x_lower,SNOB.x_upper},'nreq',SNOB.nreq,'p',SNOB.p);		% Make parameters input for snobfit
 	while stop_condition == 0
 
 		% While loop to continuously call snobfit and evaluate fcn, until either minimum is found or ncall exceeded
@@ -87,6 +91,7 @@ function runsnob(SNOB)
 
 		% Evaluate function at recommmended points, and store info
 		f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);
+
 		f(:,2) = SNOB.uncert;
 
 		SNOB.x = [SNOB.x;x];
