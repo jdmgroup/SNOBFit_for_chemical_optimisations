@@ -1,16 +1,16 @@
 # Property and Method List for SNOBFit Object (snobfitclass)
 
-In this document you will find a list of available properties and methods on the SNOBFit object created by snobfitclass.
+In this document you will find a list of available properties and methods of the SNOBFit object created by snobfitclass.
 
 ## Properties
 
-Below is a list of properties on the object. If you want to get a list of properties inside MATLAB, you can use:
+Below is a list of properties of the object. To get a list of properties from the MATLAB command line, type:
 ```
 snobfit_metadata = ?snobfitclass.snobclass;
 snobfit_properties = reshape({snobfit_metadata.PropertyList.Name}, size(snobfit_metadata.PropertyList))
 ```
 
-For the object, there are some properties that you can change and there are others that only the SNOBFit object can change. The properties that you can change are:
+There are some properties of the SNOBFit object that you can change and others that only the object itself can change. The properties that you can change are:
 
 | Property Name | Description |
 | --- | --- |
