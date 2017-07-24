@@ -78,7 +78,7 @@ function flag = checkTermination(SNOB)
 					in_upper = min(repmat(SNOB.F_upper,1,length(SNOB.F)) +...
 									repmat(SNOB.sigmaUpper,1,length(SNOB.F))- SNOB.F')';
 
-					feasible_points = find(SNOB.f <= SNOB.fglob+SNOB.threshold & in_lower >= 0 & in_upper >= 0);
+					feasible_points = find(in_lower >= 0 & in_upper >= 0);
 					if ~isempty(feasible_points)
 						[~,best_feasible] = min(SNOB.fm(feasible_points));
 						SNOB.xcon = SNOB.x(feasible_points(best_feasible), :);
