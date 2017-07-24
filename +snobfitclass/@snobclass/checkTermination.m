@@ -71,6 +71,20 @@ function flag = checkTermination(SNOB)
 				flag = 1;
 			end
 
+			if SNOB.constrained | SNOB.combo
+				% check for any feasible points
+				in_lower = min(SNOB.F' - repmat(SNOB.F_lower,1,length(SNOB.F)) +...
+								  repmat(SNOB.sigmaLower,1,length(SNOB.F)))';
+				in_upper = min(repmat(SNOB.F_upper,1,length(SNOB.F)) +...
+								  repmat(SNOB.sigmaUpper,1,length(SNOB.F))- SNOB.F')';
+
+				feasible_points = find(SNOB.f <= SNOB.fglob & in_lower >= 0 & in_upper >= 0);
+				if ~isempty(feasible_points)
+					SNOB.xcon = SNOB.x(feasible_points, :);
+					SNOB.fcon = SNOB.fm(feasible_points, 1);
+				end
+			end
+
 		otherwise
 			error('Not a recognised termination condition, must be one of "minimised","no_change","n_runs"')
 	end
