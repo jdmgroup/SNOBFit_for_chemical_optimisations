@@ -88,6 +88,6 @@ These are the methods that the *startExp* method calls, and that you should avoi
 | Method Name | Description |
 | --- | --- |
 | runsnob | Runs an unconstrained SNOBFit optimisation |
-| runcon | Runs a constrained SNOBFit optimisation |
+| runconstrained | Runs a constrained SNOBFit optimisation |
 | runcombo | Runs a combined SNOBFit optimisation - a constrained optimisation initialised by an unconstrained optimisation of the constrained properties |
 | defaults | Sets default values for SNOBFit object properties when a particular function name is set. |
