@@ -18,6 +18,8 @@ function changeStatus(SNOB)
 			end
 
 			SNOB.saveExp;
+		case 'continuing'
+			fprintf('Continuing SNOBFit optimisation created on %s\r\n', SNOB.created);
 		otherwise
 			error('Not a recognised status!')
 		end

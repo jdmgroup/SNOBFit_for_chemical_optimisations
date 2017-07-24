@@ -72,7 +72,7 @@ function loadPrevious(SNOB,src,event)
 						SNOB.ncall0 = old_snob.SNOB.ncall0;
 					end
 				end
-
+				SNOB.status = 'continuing';
 			else
 				SNOB.continuing = false;
 				fprintf(2,'There is no experiment to continue!\n')
