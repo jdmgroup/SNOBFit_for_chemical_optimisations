@@ -29,7 +29,7 @@ The important folders for defining your own custom optimisation are **+objfcn** 
 
 Your objective function must:
 * Take a SNOBFit object (an instance of the SNOBFit class) as its only argument
-* Return a 1D array of objective function values, with each cell of the output array corresponding to the function value obtained using the input parameters specified in the corresponding row of SNOB.next.
+* Return a 1D array of objective function values, with each cell of the output array corresponding to the function value obtained using the input parameters specified in the corresponding row of SNOB.next. (Note, SNOB.next is a 2D array generated internally by SNOBFit that contains a batch of data points for testing; each row of SNOB.next corresponds to a different set of input parameters that SNOBFit will test in the current batch).
 
 An example objective function from the SNOBFit package is the *hsf18* 2D surface in **+objfcn**:
 ```
