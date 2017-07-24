@@ -65,7 +65,7 @@ The properties that only the SNOBFit object can change are:
 | xcon | The input parameters at the best feasible result found during a constrained optimisation |
 | fcon | The value of your lead property at the best feasible result found during a constrained optimisation |
 | f0 | The value of your lead property at an initial feasible point, used in the constrained merit function |
-| Delta | A scaling parameter used in the constrained merit function, calculated from the median difference in lead property value of an initial set of points from the value of an initial feasible point |
+| Delta | A scaling parameter used in the constrained merit function (see our article or original SNOBFit paper) |
 | next | The input parameters recommended by the latest call to the SNOBFit algorithm |
 | fbestHistory | A store of the lead property value at the best result found after each call to the SNOBFit algorithm, used for *no_change* termination criterion |
 | valuesToPass | A store of values to be passed between an objected function and the constraint function, can be accessed by a MATLAB function |
