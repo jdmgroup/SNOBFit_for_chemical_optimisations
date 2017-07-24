@@ -20,31 +20,31 @@ There are some properties of the SNOBFit object that you can change and others t
 | linked | This property is mainly relevant for flow reactors, where you may need to control the relative and total flow rates of two reagent streams (see XXX). If two of your input parameters are linked, set to true |
 | constrained | If you are running a contrained optimisation, set to true |
 | continuing | If you are continuing a previous optimisation (can be inititialised by creating a SNOBFit object with the same name as a previous optimisation) |
-| combo | If you are running a constrained optimisation that is initialised by running an unconstrained optimisation on the constraint functions |
-| ncall | The maximum number of function evaluations to terminated the optimisation after |
-| termination | The termination criteria for the optimisation, can be *n_runs* (default), *minimised*, or *no_change* |
-| filepath | The path to where you want to save the optimisation results |
-| x_lower | The lower bounds of your input parameters |
-| x_upper | The upper bounds of your input parameters |
+| combo | If you are running a constrained optimisation, in which you first search for a feasible point by minimising the penalty function P calculated from the constraint functions (can by initialised by XXX) |
+| ncall | The maximum number of function evaluations before termination |
+| termination | The termination criteria for the optimisation, can be set to *n_runs* (default), *minimised*, or *no_change* |
+| filepath | The file path that specifies where the optimisation results will be saved |
+| x_lower | The lower bounds on your input parameters |
+| x_upper | The upper bounds on your input parameters |
 | xyMin | The overall minimum of two linked input parameters |
 | xyMax | The overall maximum of two linked input parameters |
 | minRatio | The minimum ratio between two linked input parameters |
 | maxRatio | The maximum ratio between two linked input parameters |
 | zMin | The minimum of an optional third input parameter when using two linked input parameters |
 | zMax | The maximum of an optional third input parameter when using two linked input parameters |
-| F_upper | Chosen upper limits on the constraint functions |
-| F_lower | Chosen lower limits on the constraint functions |
-| sigma | Symmetric gradient on the penalty function for a constrained optimisation |
-| sigmaUpper | Gradient of the penalty function for violations of the upper limits of constraints |
-| sigmaLower | Gradient of the penalty function for the violations of the lower limits of constraints |
+| F_upper | Upper limits on the constrained properties |
+| F_lower | Lower limits on the constraint properties |
+| sigma | Maximum permitted deviations from preferred upper and lower bounds of properties |
+| sigmaUpper | Maximum permitted deviations from preferred upper bounds of properties |
+| sigmaLower | Maximum permitted deviation from preferred lower bounds of properties |
 | nreq | The number of points to request from the SNOBFit algorithm |
-| npoint | The number of random points to initialise the optimisation with |
+| npoint | The number of random points used to initialise the optimisation |
 | p | Defines the ratio between local and global minimisers recommended by the SNOBFit algorithm (defaults to 0.4) |
 | fglob | The expected function minimum for your lead property (defaults to 0) |
-| threshold | The threshold from the expected function minimum under which to terminate the optimisation |
-| nCallNoChange | The number of calls to the SNOBFit algorithm with no change to the best results to terminate after, use with *no_change* termination criterion |
+| threshold | The threshold from the expected function minimum. The optimisation will terminate when the function value is smaller than fglob + threshold |
+| nCallNoChange | The SNOBFit algorithm if nCallNoChange successive function evaluations lead to no reduction in the lowest function value , use with *no_change* termination criterion |
 | minCalls | The minimum number of function evaluations to run before termination, use with *no_change* termination criterion |
-| repeatBest | If true, evaluates the lead property function again at the best result found during the optimisation |
+| repeatBest | If true, re-evaluates the lead property function at the best point (xbest) at the end of the optimisation |
 | plot_delay | Delay in seconds between each function evaluation, can aid with plotting during optimisation |
 
 The properties that only the SNOBFit object can change are:
@@ -55,7 +55,7 @@ The properties that only the SNOBFit object can change are:
 | f | The values of the lead property for points that have already been evaluated |
 | F | The values of the constrained properties for points that have already been evaluated |
 | fm | The values of the constrained merit function for points that have already been evaluated |
-| xVirt | The transformed values of input parameters, when two are linked together |
+| xVirt | The transformed values of input parameters, when two input parameters are linked together |
 | n | The number of input parameters, the dimension of the optimisation |
 | ncall0 | The number of function evaluations during the optimisation |
 | status | The status of the optimisation |
