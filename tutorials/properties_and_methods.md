@@ -16,9 +16,9 @@ There are some properties of the SNOBFit object that you can change and others t
 | --- | --- |
 | name | The name that your experiment should be saved under |
 | fcn | The name of the function that you want to minimise, it should return the value of your lead property |
-| constraintFcn | The name of the function that calculates your constrained properties, for a constrained optimisation |
-| linked | If two of your input parameters are linked, set to true if they are |
-| constrained | If you are running a contrained optimisation, set to true if you are |
+| constraintFcn | The name of the function that calculates your constrained properties; this property is required only for a constrained optimisation |
+| linked | This property is mainly relevant for flow reactors, where you may need to control the relative and total flow rates of two reagent streams (see XXX). If two of your input parameters are linked, set to true |
+| constrained | If you are running a contrained optimisation, set to true |
 | continuing | If you are continuing a previous optimisation (can be inititialised by creating a SNOBFit object with the same name as a previous optimisation) |
 | combo | If you are running a constrained optimisation that is initialised by running an unconstrained optimisation on the constraint functions |
 | ncall | The maximum number of function evaluations to terminated the optimisation after |
