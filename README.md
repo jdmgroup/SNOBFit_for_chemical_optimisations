@@ -1,5 +1,5 @@
 # SnobfitClass
-Class-based wrapper for Neumaier and Huyer's MATLAB-based implementation of SNOBfit. This wrapper is designed to simplify the installation and use of SNOBFit, especially for chemical and other blackbox optimisations.
+Class-based wrapper for Neumaier and Huyer's MATLAB-based implementation of SNOBFit. This wrapper is designed to simplify the installation and use of SNOBFit, especially for chemical and other blackbox optimisations.
 
 The underlying files (which may be found in the "+snobfcn" folder) were written by Arnold Neumaier, and can be found here:
 http://www.mat.univie.ac.at/~neum/software/snobfit/
