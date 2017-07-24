@@ -211,7 +211,7 @@ snobfit_object.x_upper = [25; 80];  % upper bounds
 ```
 In this example:
 * The lower bounds are set with the *x_lower* property, and the upper bounds are set with the *x_upper* property.
-* SNOBfit infers the dimensionality of the optimisation from the number of lower/upper bounds you declare. You do not need to specify the dimensionality elsewhere. Hence, since there are two elements in *x_lower* and *x_upper* SNOBfit knows that you are carrying out a 2D optimisation.
+* SNOBfit infers the dimensionality of the optimisation from the number of lower/upper bounds you declare. You do not need to specify the dimensionality elsewhere. Hence, since there are two elements in *x_lower* and *x_upper*, SNOBfit knows that you are carrying out a 2D optimisation.
 * *x_lower* and *x_upper* are both *n*-by-*1* arrays where *n* is the number of reaction conditions, or dimensions, you are changing in your optimisation.
 * In the above example SNOBFit is allowed to test any value between 5 and 25 for input parameter *1* and any value between 30 and 80 for parameter *2*. The exact values you specify will of course depend on the nature of your own experiment.
 * The order of the bounds in *x_lower* and *x_upper* must match the column order in *snobfit_object.next*. Hence, if the first column of *snobfit_object.next* is the reaction temperature, then the first elements of *x_lower* and *x_upper* must correspond to the lower and upper bounds on the temperature.
