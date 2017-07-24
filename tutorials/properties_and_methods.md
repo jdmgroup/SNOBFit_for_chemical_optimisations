@@ -30,6 +30,8 @@ For the object, there are some properties that you can change and there are othe
 | xyMax | The overall maximum of two linked input parameters |
 | minRatio | The minimum ratio between two linked input parameters |
 | maxRatio | The maximum ratio between two linked input parameters |
+| zMin | The minimum of an optional third input parameter when using two linked input parameters |
+| zMax | The maximum of an optional third input parameter when using two linked input parameters |
 | F_upper | Chosen upper limits on the constraint functions |
 | F_lower | Chosen lower limits on the constraint functions |
 | sigma | Symmetric gradient on the penalty function for a constrained optimisation |
