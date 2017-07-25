@@ -42,7 +42,7 @@ There are some properties of the SNOBFit object that you can change and others t
 | p | Defines the ratio between local and global minimisers recommended by the SNOBFit algorithm (defaults to 0.4) | float, between 0 and 1 |
 | fglob | The expected function minimum for your lead property (defaults to 0) | float |
 | threshold | The threshold from the expected function minimum. The optimisation will terminate when the function value is smaller than fglob + threshold | float |
-| nCallNoChange | The SNOBFit algorithm if nCallNoChange successive function evaluations lead to no reduction in the lowest function value , use with *no_change* termination criterion | float |
+| nCallNoChange | The SNOBFit algorithm terminates if nCallNoChange successive function evaluations lead to no reduction in the lowest function value, use with *no_change* termination criterion | float |
 | minCalls | The minimum number of function evaluations to run before termination, use with *no_change* termination criterion | float |
 | repeatBest | If true, re-evaluates the lead property function at the best point (xbest) at the end of the optimisation | boolean |
 | plot_delay | Delay in seconds between each function evaluation, can aid with plotting during optimisation | integer |
