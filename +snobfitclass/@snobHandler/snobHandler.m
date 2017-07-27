@@ -11,6 +11,7 @@ classdef snobHandler
 		checkPath(SNOB, src, event)
 		checkName(SNOB)
 		loadPrevious(SNOB,src,event)
+		setConstraintSlopes(SNOB,src,event)
 
 	end
 

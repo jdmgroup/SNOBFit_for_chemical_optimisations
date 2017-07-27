@@ -11,14 +11,15 @@ function flag = checkTermination(SNOB)
 				% Check that the global minimum has been found,
 				% and the constraints are satisfied
 				in_lower = min(SNOB.F' - repmat(SNOB.F_lower,1,length(SNOB.F)) +...
-								  repmat(SNOB.sigma,1,length(SNOB.F)))';
+								  repmat(SNOB.sigmaLower,1,length(SNOB.F)))';
 				in_upper = min(repmat(SNOB.F_upper,1,length(SNOB.F)) +...
-								  repmat(SNOB.sigma,1,length(SNOB.F))- SNOB.F')';
+								  repmat(SNOB.sigmaUpper,1,length(SNOB.F))- SNOB.F')';
 
-				feasible_points = find(SNOB.f <= SNOB.fglob & in_lower >= 0 & in_upper >= 0);
+				feasible_points = find(SNOB.f <= SNOB.fglob+SNOB.threhold & in_lower >= 0 & in_upper >= 0);
 				if ~isempty(feasible_points)
-					SNOB.xcon = SNOB.x(feasible_points, :);
-					SNOB.fcon = SNOB.fm(feasible_points, 1);
+					[~,best_feasible] = min(SNOB.fm(feasible_points));
+					SNOB.xcon = SNOB.x(feasible_points(best_feasible), :);
+					SNOB.fcon = SNOB.f(feasible_points(best_feasible), 1);
 					flag = 1;
 				end
 
@@ -69,7 +70,23 @@ function flag = checkTermination(SNOB)
 		
 			if SNOB.ncall0 >= SNOB.ncall
 				flag = 1;
+				
+				if SNOB.constrained | SNOB.combo
+					% check for any feasible points
+					in_lower = min(SNOB.F' - repmat(SNOB.F_lower,1,length(SNOB.F)) +...
+									repmat(SNOB.sigmaLower,1,length(SNOB.F)))';
+					in_upper = min(repmat(SNOB.F_upper,1,length(SNOB.F)) +...
+									repmat(SNOB.sigmaUpper,1,length(SNOB.F))- SNOB.F')';
+
+					feasible_points = find(in_lower >= 0 & in_upper >= 0);
+					if ~isempty(feasible_points)
+						[~,best_feasible] = min(SNOB.fm(feasible_points));
+						SNOB.xcon = SNOB.x(feasible_points(best_feasible), :);
+						SNOB.fcon = SNOB.f(feasible_points(best_feasible), 1);
+					end
+				end
 			end
+
 
 		otherwise
 			error('Not a recognised termination condition, must be one of "minimised","no_change","n_runs"')

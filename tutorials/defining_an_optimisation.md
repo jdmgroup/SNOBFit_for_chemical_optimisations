@@ -29,7 +29,7 @@ The important folders for defining your own custom optimisation are **+objfcn** 
 
 Your objective function must:
 * Take a SNOBFit object (an instance of the SNOBFit class) as its only argument
-* Return a 1D array of objective function values, with each cell of the output array corresponding to the function value obtained using the input parameters specified in the corresponding row of SNOB.next.
+* Return a 1D array of objective function values, with each cell of the output array corresponding to the function value obtained using the input parameters specified in the corresponding row of SNOB.next. (Note, SNOB.next is a 2D array generated internally by SNOBFit that contains a batch of data points for testing; each row of SNOB.next corresponds to a different set of input parameters that SNOBFit will test in the current batch).
 
 An example objective function from the SNOBFit package is the *hsf18* 2D surface in **+objfcn**:
 ```
@@ -194,6 +194,12 @@ snobfit_object.sigma = [0.3; 0.3]
 ```
 Here we have set &#963; to the same value of 0.3 for both constraints, but you can chose any values that suit your purpose. The simplest way to choose the &#963; values is to set them equal to the maximum tolerable violation of each constraint. For the example given, our choice of &#963; values would mean that we could tolerate anything down to 0.6 for [X1+X2] (*F_lower* - &#963;), and anything up to 0.8 for R (*F_upper* + &#963;). The order of the elements in snobfit_object.sigma must match the column order of *F*.
 
+You can also set different values of &#963; for the upper and lower limits of each constraint. If we wanted to do this for the above example:
+```
+snobfit_object.sigmaUpper = [0.3; 0.3];
+snobfit_object.sigmaLower = [0.1; 0.1];
+```
+
 ### Setting Bounds on the Input Parameters
 
 SNOBFit is a bounded optimisation algorithm, which means you must specify upper and lower limits for each input parameter. This makes it a good fit for chemical optimisations, where the range of usable reaction conditions is typically limited due to physical limitations. For instance, in a flow-based reaction, the boiling point of a solvent places an upper limit on the reaction temperature. It may sometimes be the case that you know from previous experience the range of conditions within which the optimium lies, meaning you should limit your search to include this range only.
@@ -205,7 +211,7 @@ snobfit_object.x_upper = [25; 80];  % upper bounds
 ```
 In this example:
 * The lower bounds are set with the *x_lower* property, and the upper bounds are set with the *x_upper* property.
-* SNOBfit infers the dimensionality of the optimisation from the number of lower/upper bounds you declare. You do not need to specify the dimensionality elsewhere. Hence, since there are two elements in *x_lower* and *x_upper* SNOBfit knows that you are carrying out a 2D optimisation.
+* SNOBfit infers the dimensionality of the optimisation from the number of lower/upper bounds you declare. You do not need to specify the dimensionality elsewhere. Hence, since there are two elements in *x_lower* and *x_upper*, SNOBfit knows that you are carrying out a 2D optimisation.
 * *x_lower* and *x_upper* are both *n*-by-*1* arrays where *n* is the number of reaction conditions, or dimensions, you are changing in your optimisation.
 * In the above example SNOBFit is allowed to test any value between 5 and 25 for input parameter *1* and any value between 30 and 80 for parameter *2*. The exact values you specify will of course depend on the nature of your own experiment.
 * The order of the bounds in *x_lower* and *x_upper* must match the column order in *snobfit_object.next*. Hence, if the first column of *snobfit_object.next* is the reaction temperature, then the first elements of *x_lower* and *x_upper* must correspond to the lower and upper bounds on the temperature.
@@ -242,7 +248,7 @@ snobfit_object.termination = 'n_runs'; % termination criterion
 snobfit_object.ncall = 100;            % maximum number of function evaluations
 ```
 
-Another termination criterion is **'minimised'**. This will end the optimisation when the best objective function value is below a threshold value, or after a maximum number of objective function evaluations. You can set this threshold, and a target minimum if known:
+Another termination criterion is **'minimised'**, which will end the optimisation when the best objective function value lies within a threshold of a target value fglob, or after a maximum number of objective function evaluations. You can set the threshold and target values:
 ```
 snobfit_object.termination = 'minimised';  % termination criterion
 snobfit_object.fglob = 0;                  % target minimum, defaults to zero if not known
@@ -250,7 +256,7 @@ snobfit_object.threshold = 0.001;          % threshold for termination
 snobfit_object.ncall = 100;                % maximum number of objective function evaluations
 ```
 
-If you are running a constrained optimisation, there is an additional check to make sure the point(s) that satisfy the termination criterion also satisfy the constraints. If an objective value smaller than the threshold is found under conditions that do not satisfy the constraints, the optimisation will continue.
+If you are running a constrained optimisation, there is an additional check to make sure the point(s) that satisfy the termination criterion also satisfy the constraints. If an objective value smaller than (fglob + threshold) is found under conditions that do not satisfy the constraints, the optimisation will continue.
 
 The final termination criterion included in the SNOBFit object is **'no_change'**. This ends the optimisation if there has been no change in the best objective function value for a set number of calls to the SNOBFit algorithm. There is a chance that applying this criterion may cause the optimisation to terminate too early, so you can also set a minimum number of objective function evaluations before checking for a change:
 ```

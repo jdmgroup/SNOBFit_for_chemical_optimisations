@@ -151,7 +151,8 @@ function runcombo(SNOB)
         % calculate softmerit for all points looked at already
         fm = zeros(length(SNOB.f),1);
         for i = 1:length(SNOB.f)
-            fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
+            fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
+                                SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
         end
         fm(:,2) = sqrt(eps);
 
@@ -195,7 +196,8 @@ function runcombo(SNOB)
 
 		fm = zeros(size(f));
 		for i = 1:SNOB.nreq
-			fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
+			fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
+                                SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
 		end
 		fm(:,2) = sqrt(eps);
 
@@ -226,7 +228,8 @@ function runcombo(SNOB)
 
 				fm = zeros(K,1);
 				for i = 1:K
-					fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,SNOB.Delta,SNOB.sigma);
+					fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
+                                        SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
 				end
 				fm(:,2) = sqrt(eps);
 				

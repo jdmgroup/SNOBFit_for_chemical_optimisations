@@ -23,6 +23,7 @@ classdef snobclass < handle
 		x_upper;	% Upper Bounds of experiment parameters
 		fglob = 0;	% Expected global minimum of f
 		xglob;		% Expected global minimisers
+		sigma;		% slope for constrained merit function, symmetric
 	end
 
 	properties (Hidden = true, SetAccess = ?snobfitclass.snobHandler)
@@ -46,7 +47,8 @@ classdef snobclass < handle
 		xstart;				% User defined starting point
 		F_lower;			% Lower Bounds for constraint function
 		F_upper;			% Upper Bounds for constraint function
-		sigma;				% slope for constrained merit function
+		sigmaUpper;			% slope for constrained merit function, upper bound violations
+		sigmaLower;			% slope for constrained merit function, lower bound violations
 		fbestHistory; 		% history of fbest for each call to snobfit
 		ncallNoChange = 5; 	% number of same function values before terminating
 		minCalls;			% minimum number of calls before terminating

@@ -38,7 +38,7 @@ function loadPrevious(SNOB,src,event)
 						cont_names = {cont_files(order).name};
 						old_snob = load(fullfile(SNOB.filepath,'Results',SNOB.name,cont_names{end})); % JHB
 					else
-						old_snob = load(fullfile(SNOB.filepath,'Results',SNOB.name,SNOB.name,'.mat')); % JHB
+						old_snob = load(fullfile(SNOB.filepath,'Results',SNOB.name,[SNOB.name,'.mat'])); % JHB
 					end
 
 					% if there is a finished snobfit object, we can load some more variables
@@ -72,7 +72,7 @@ function loadPrevious(SNOB,src,event)
 						SNOB.ncall0 = old_snob.SNOB.ncall0;
 					end
 				end
-
+				SNOB.status = 'continuing';
 			else
 				SNOB.continuing = false;
 				fprintf(2,'There is no experiment to continue!\n')
