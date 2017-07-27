@@ -248,7 +248,7 @@ snobfit_object.termination = 'n_runs'; % termination criterion
 snobfit_object.ncall = 100;            % maximum number of function evaluations
 ```
 
-Another termination criterion is **'minimised'**. This will end the optimisation when the best objective function value is below a threshold value, or after a maximum number of objective function evaluations. You can set this threshold, and a target minimum if known:
+Another termination criterion is **'minimised'**, which will end the optimisation when the best objective function value lies within a threshold of a target value fglob, or after a maximum number of objective function evaluations. You can set the threshold and target values:
 ```
 snobfit_object.termination = 'minimised';  % termination criterion
 snobfit_object.fglob = 0;                  % target minimum, defaults to zero if not known
@@ -256,7 +256,7 @@ snobfit_object.threshold = 0.001;          % threshold for termination
 snobfit_object.ncall = 100;                % maximum number of objective function evaluations
 ```
 
-If you are running a constrained optimisation, there is an additional check to make sure the point(s) that satisfy the termination criterion also satisfy the constraints. If an objective value smaller than the threshold is found under conditions that do not satisfy the constraints, the optimisation will continue.
+If you are running a constrained optimisation, there is an additional check to make sure the point(s) that satisfy the termination criterion also satisfy the constraints. If an objective value smaller than (fglob + threshold) is found under conditions that do not satisfy the constraints, the optimisation will continue.
 
 The final termination criterion included in the SNOBFit object is **'no_change'**. This ends the optimisation if there has been no change in the best objective function value for a set number of calls to the SNOBFit algorithm. There is a chance that applying this criterion may cause the optimisation to terminate too early, so you can also set a minimum number of objective function evaluations before checking for a change:
 ```

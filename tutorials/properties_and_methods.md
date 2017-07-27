@@ -20,7 +20,7 @@ There are some properties of the SNOBFit object that you can change and others t
 | linked | This property is mainly relevant for flow reactors, where you may need to control the relative and total flow rates of two reagent streams (see *defining_an_optimisation.md*). If two of your input parameters are linked, set to true | boolean (true or false) |
 | constrained | If you are running a contrained optimisation, set to true | boolean |
 | continuing | If you are continuing a previous optimisation (can be inititialised by creating a SNOBFit object with the same name as a previous optimisation) | boolean |
-| combo | If you are running a constrained optimisation, in which you first search for a feasible point by minimising the penalty function P calculated from the constraint functions (can by initialised by XXX) | boolean |
+| combo | If you are running a constrained optimisation, in which you first search for a feasible point by minimising the penalty function P calculated from the constraint functions | boolean |
 | ncall | The maximum number of function evaluations before termination | integer |
 | termination | The termination criteria for the optimisation, can be set to *n_runs* (default), *minimised*, or *no_change* | string |
 | filepath | The file path that specifies where the optimisation results will be saved | string |
@@ -42,7 +42,7 @@ There are some properties of the SNOBFit object that you can change and others t
 | p | Defines the ratio between local and global minimisers recommended by the SNOBFit algorithm (defaults to 0.4) | float, between 0 and 1 |
 | fglob | The expected function minimum for your lead property (defaults to 0) | float |
 | threshold | The threshold from the expected function minimum. The optimisation will terminate when the function value is smaller than fglob + threshold | float |
-| nCallNoChange | The SNOBFit algorithm if nCallNoChange successive function evaluations lead to no reduction in the lowest function value , use with *no_change* termination criterion | float |
+| nCallNoChange | The SNOBFit algorithm terminates if nCallNoChange successive function evaluations lead to no reduction in the lowest function value, use with *no_change* termination criterion | float |
 | minCalls | The minimum number of function evaluations to run before termination, use with *no_change* termination criterion | float |
 | repeatBest | If true, re-evaluates the lead property function at the best point (xbest) at the end of the optimisation | boolean |
 | plot_delay | Delay in seconds between each function evaluation, can aid with plotting during optimisation | integer |
@@ -75,9 +75,9 @@ The properties that only the SNOBFit object can change are:
 
 ## Methods
 
-Below is a list of methods and a description of what they can do. You can access most of them, but it is only advisable to call some of them yourself.
+Below is a list of methods and a description of what they can do. You can access most of them, but you should avoid using the second set of methods listed.
 
-These are the methods that you may use yourself:
+These are the methods that you may safely use yourself:
 
 | Method Name | Description |
 | --- | --- |
@@ -85,7 +85,7 @@ These are the methods that you may use yourself:
 | saveExp | Saves the results and a summary of your optimistion |
 | plotBounds | Plots an outline of the input parameter bounds |
 
-These are the methods that the *startExp* method calls, and that you should avoid calling directly yourself:
+These are the methods that the *startExp* method calls; you should not need to use these yourself:
 
 | Method Name | Description |
 | --- | --- |
