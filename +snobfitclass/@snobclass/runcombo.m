@@ -57,7 +57,7 @@ function runcombo(SNOB)
         SNOB.ncall0 = SNOB.ncall0 + length(f);
 
         % check if there are any valid points
-        isvalid = find(sum(repmat(SNOB.F_lower',SNOB.npoint,1) <= F & F <= repmat(SNOB.F_upper',SNOB.npoint,1),2) == length(SNOB.F_lower));
+        isvalid = all(repmat(SNOB.F_lower', SNOB.npoint, 1) <= F & F <= repmat(SNOB.F_upper', SNOB.npoint, 1), 2);
         params = struct('bounds',{SNOB.x_lower,SNOB.x_upper},'nreq',SNOB.nreq,'p',SNOB.p);
 
     else
@@ -65,14 +65,14 @@ function runcombo(SNOB)
 		f = SNOB.f;
 		F = SNOB.F;
 		x = SNOB.x;
-		isvalid = find(sum(repmat(SNOB.F_lower',length(F),1) <= F & F <= repmat(SNOB.F_upper',length(F),1),2) == length(SNOB.F_lower));
+        isvalid = all(repmat(SNOB.F_lower', length(F), 1) <= F & F <= repmat(SNOB.F_upper', length(F), 1), 2);
         params = struct('bounds',{SNOB.x_lower,SNOB.x_upper},'nreq',SNOB.nreq,'p',SNOB.p);
         change = 0;
     end
 	% enter loop until valid points are found
     if ~SNOB.continuing | isinf(SNOB.f0)
         fprintf('finding f0 by SNOBFit...\n')
-        while isempty(isvalid)
+        while ~any(isvalid)
             % want to minimise the penalty on F
             above_bounds = SNOB.F - repmat(SNOB.F_upper', length(SNOB.F), 1);
             below_bounds = repmat(SNOB.F_lower', length(SNOB.F), 1) - SNOB.F;
@@ -122,7 +122,7 @@ function runcombo(SNOB)
             SNOB.ncall0 = SNOB.ncall0 + length(f);
 
             % check if there are any valid points
-            isvalid = find(sum(repmat(SNOB.F_lower',SNOB.npoint,1) <= F & F <= repmat(SNOB.F_upper',SNOB.npoint,1),2) == length(SNOB.F_lower));
+            isvalid = all(repmat(SNOB.F_lower', SNOB.npoint, 1) <= F & F <= repmat(SNOB.F_upper', SNOB.npoint, 1), 2);
 
             % if the number of desired runs has been exceeded, stop
             if SNOB.ncall0 > SNOB.ncall./3
@@ -136,13 +136,13 @@ function runcombo(SNOB)
         %SNOB.ncall = SNOB.ncall0 + SNOB.ncall;
 
         % assing f0 as the minimum valid value of f
-        if isempty(isvalid)
+        if any(isvalid)
+            SNOB.f0 = min(f(isvalid));
+        else
             % if a valid value of f was not found, go for the on that minimises F
             Fdiff = sum(abs(repmat(snob_target,length(SNOB.f),1)-SNOB.F),2);
             [~,minF_i] = min(Fdiff);
             SNOB.f0 = SNOB.f(minF_i);
-        else
-            SNOB.f0 = min(f(isvalid));
         end
         fprintf('\nFound f0 as %f at call %d\n', SNOB.f0, SNOB.ncall0)
         SNOB.Delta = median(abs(f - SNOB.f0));

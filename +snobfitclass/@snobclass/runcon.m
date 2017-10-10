@@ -49,8 +49,8 @@ function runcon(SNOB)
 		error('Each constraint must be returned as a column in F, you have returned them as rows')
 	end
 
-	isvalid = find(sum(repmat(SNOB.F_lower',SNOB.npoint,1) <= F & F <= repmat(SNOB.F_upper',SNOB.npoint,1)));
-	if ~isempty(isvalid)
+	isvalid = all(repmat(SNOB.F_lower', SNOB.npoint, 1) <= F & F <= repmat(SNOB.F_upper', SNOB.npoint, 1), 2);
+	if any(isvalid)
 		SNOB.f0 = min(f(isvalid));
 	else
 		SNOB.f0 = 2 * max(f) - min(f);
