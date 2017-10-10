@@ -138,6 +138,7 @@ function runcombo(SNOB)
         % assing f0 as the minimum valid value of f
         if any(isvalid)
             SNOB.f0 = min(f(isvalid));
+            SNOB.feasiblePointFound = true;
         else
             % if a valid value of f was not found, go for the on that minimises F
             Fdiff = sum(abs(repmat(snob_target,length(SNOB.f),1)-SNOB.F),2);
@@ -210,6 +211,11 @@ function runcombo(SNOB)
 
 		[SNOB.fbest,jbest] = min(SNOB.fm);
 		SNOB.xbest = SNOB.x(jbest,:);
+
+        isvalid = all(repmat(SNOB.F_lower', SNOB.npoint, 1) <= F & F <= repmat(SNOB.F_upper', SNOB.npoint, 1), 2);
+        if any(isvalid)
+            SNOB.feasiblePointFound = true;
+        end
 
 		notify(SNOB, 'DataToPlot');
 		notify(SNOB, 'DataToPrint');

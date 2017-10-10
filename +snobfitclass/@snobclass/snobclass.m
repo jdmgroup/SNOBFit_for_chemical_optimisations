@@ -9,6 +9,7 @@ classdef snobclass < handle
 		conStart = 0;	% number of calls after which constrained method started (only applies to combo)
 		f0 = Inf;		% initial feasible value for constraint merit function
 		Delta = Inf;	% scaling parameter for constraint merit function
+		feasiblePointFound = false; % if a feasible point has been found or not
 	end
 
 	properties (Hidden = true, SetObservable, AbortSet)

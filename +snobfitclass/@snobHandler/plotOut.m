@@ -3,6 +3,12 @@ function plotOut(SNOB)
 		figure;
 	end
 
+	if SNOB.feasiblePointFound
+		best_marker = 'rx';
+	else
+		best_marker = 'kx';
+	end
+
 	if SNOB.linked
 		subplot(1,3,1);
 		scatter(SNOB.x(:,1),SNOB.x(:,2),50,abs(SNOB.fglob - SNOB.f));
@@ -21,7 +27,7 @@ function plotOut(SNOB)
 		ylabel('y');
 
 		subplot(1,3,3);
-		plot(SNOB.ncall0,SNOB.fbest,'kx','MarkerSize',5,'LineWidth',2);
+		plot(SNOB.ncall0,SNOB.fbest,best_marker,'MarkerSize',5,'LineWidth',2);
 		xlabel('Number of function calls');
 		ylabel('fbest');
 		hold on;
@@ -34,7 +40,7 @@ function plotOut(SNOB)
 		ylabel('y');
 
 		subplot(1,2,2);
-		plot(SNOB.ncall0,SNOB.fbest,'kx','MarkerSize',5,'LineWidth',2);
+		plot(SNOB.ncall0,SNOB.fbest,best_marker,'MarkerSize',5,'LineWidth',2);
 		xlabel('Number of function calls');
 		ylabel('fbest');
 		hold on;

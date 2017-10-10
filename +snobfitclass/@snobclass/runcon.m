@@ -52,6 +52,7 @@ function runcon(SNOB)
 	isvalid = all(repmat(SNOB.F_lower', SNOB.npoint, 1) <= F & F <= repmat(SNOB.F_upper', SNOB.npoint, 1), 2);
 	if any(isvalid)
 		SNOB.f0 = min(f(isvalid));
+		SNOB.feasiblePointFound = true;
 	else
 		SNOB.f0 = 2 * max(f) - min(f);
 	end
@@ -116,10 +117,15 @@ function runcon(SNOB)
 		[SNOB.fbest,jbest] = min(SNOB.fm);
 		SNOB.xbest = SNOB.x(jbest,:);
 
+		isvalid = all(repmat(SNOB.F_lower', SNOB.npoint, 1) <= F & F <= repmat(SNOB.F_upper', SNOB.npoint, 1), 2);
+		if any(isvalid)
+			SNOB.feasiblePointFound = true;
+		end
+
 		notify(SNOB, 'DataToPlot');
 		notify(SNOB, 'DataToPrint');
 
-		stop_condition = SNOB.checkTermination();
+		stop_condition = SNOB.checkTermination();		
 
 		if SNOB.fbest < 0 & change == 0
 			K = size(SNOB.x,1);
