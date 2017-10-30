@@ -69,6 +69,9 @@ function runcombo(SNOB)
         params = struct('bounds',{SNOB.x_lower,SNOB.x_upper},'nreq',SNOB.nreq,'p',SNOB.p);
         change = 0;
     end
+
+    SNOB.isFeasible = isvalid;
+
 	% enter loop until valid points are found
     if ~SNOB.continuing | isinf(SNOB.f0)
         fprintf('finding f0 by SNOBFit...\n')
@@ -123,7 +126,7 @@ function runcombo(SNOB)
 
             % check if there are any valid points
             isvalid = all(repmat(SNOB.F_lower', SNOB.npoint, 1) <= F & F <= repmat(SNOB.F_upper', SNOB.npoint, 1), 2);
-
+            SNOB.isFeaible = [SNOB.isFeasible; isvalid];
             % if the number of desired runs has been exceeded, stop
             if SNOB.ncall0 > SNOB.ncall./3
                 fprintf('SNOBFit was unable to find a feasible starting point!\n')
@@ -219,6 +222,8 @@ function runcombo(SNOB)
         if any(isvalid)
             SNOB.feasiblePointFound = true;
         end
+
+        SNOB.isFeasible = [SNOB.isFeasible; isvalid];
 
 		notify(SNOB, 'DataToPlot');
 		notify(SNOB, 'DataToPrint');

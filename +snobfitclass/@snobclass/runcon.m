@@ -57,6 +57,8 @@ function runcon(SNOB)
 		SNOB.f0 = 2 * max(f) - min(f);
 	end
 
+	SNOB.isFeasible = isvalid;
+
 	SNOB.Delta = median(abs(f(~isnan(f)) - SNOB.f0));
 	for i = 1:SNOB.npoint
 		fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
@@ -124,6 +126,8 @@ function runcon(SNOB)
 		if any(isvalid)
 			SNOB.feasiblePointFound = true;
 		end
+
+		SNOB.isFeasible = [SNOB.isFeasible; isvalid];
 
 		notify(SNOB, 'DataToPlot');
 		notify(SNOB, 'DataToPrint');
