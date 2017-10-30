@@ -35,7 +35,6 @@ classdef snobclass < handle
 		xVirt;		% Virtual Points investigated (only for linked)
 		n;			% Number of experiment parameters (dimension of problem)
 		ncall0;		% Number times snobfit has been called
-		dx;			% Resolution vector
 		trapezoid;	% Trapezoid constraining parameters
 	end
 
@@ -55,6 +54,7 @@ classdef snobclass < handle
 		minCalls;			% minimum number of calls before terminating
 		repeatBest = false;	% option to repeat the measurement at fbest
 		plot_delay = 0;		% how long to pause between snobfit calls, for plotting
+		dx;					% Resolution vector
 		valuesToPass; 		% convenience property for passing values between objective and constraints
 	end
 
