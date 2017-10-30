@@ -57,7 +57,7 @@ function runcon(SNOB)
 		SNOB.f0 = 2 * max(f) - min(f);
 	end
 
-	SNOB.Delta = median(abs(f - SNOB.f0));
+	SNOB.Delta = median(abs(f(~isnan(f)) - SNOB.f0));
 	for i = 1:SNOB.npoint
 		fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
 							SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
@@ -133,7 +133,7 @@ function runcon(SNOB)
 			if ~isempty(ind)
 				change = 1;
 				SNOB.f0 = min(SNOB.f(ind));
-				SNOB.Delta = median(abs(SNOB.f - SNOB.f0));
+				SNOB.Delta = median(abs(SNOB.f(~isnan(SNOB.f)) - SNOB.f0));
 
 				fm = zeros(K,1);
 				for i = 1:K

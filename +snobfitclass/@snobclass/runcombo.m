@@ -146,7 +146,7 @@ function runcombo(SNOB)
             SNOB.f0 = SNOB.f(minF_i);
         end
         fprintf('\nFound f0 as %f at call %d\n', SNOB.f0, SNOB.ncall0)
-        SNOB.Delta = median(abs(f - SNOB.f0));
+        SNOB.Delta = median(abs(f(~isnan(f)) - SNOB.f0));
         fprintf('Found Delta as %f\n\n', SNOB.Delta)
 
         % calculate softmerit for all points looked at already
@@ -228,7 +228,7 @@ function runcombo(SNOB)
 			if ~isempty(ind)
 				change = 1;
 				SNOB.f0 = min(SNOB.f(ind));
-				SNOB.Delta = median(abs(SNOB.f - SNOB.f0));
+				SNOB.Delta = median(abs(SNOB.f(~isnan(SNOB.f)) - SNOB.f0));
                 fprintf('\nf0 changed to %f at call %d\n', SNOB.f0, SNOB.ncall0)
                 fprintf('Delta changed to %f\n\n', SNOB.Delta)
 
