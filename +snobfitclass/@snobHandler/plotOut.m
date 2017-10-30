@@ -27,7 +27,7 @@ function plotOut(SNOB)
 		ylabel('y');
 
 		subplot(1,3,3);
-		plot(SNOB.ncall0,SNOB.fbest,best_marker,'MarkerSize',5,'LineWidth',2);
+		plot([SNOB.nreq:SNOB.nreq:SNOB.ncall0],SNOB.f(SNOB.fbestHistory),best_marker,'MarkerSize',5,'LineWidth',2);
 		xlabel('Number of function calls');
 		ylabel('fbest');
 		hold on;
@@ -40,7 +40,7 @@ function plotOut(SNOB)
 		ylabel('y');
 
 		subplot(1,2,2);
-		plot(SNOB.ncall0,SNOB.fbest,best_marker,'MarkerSize',5,'LineWidth',2);
+		plot([SNOB.nreq:SNOB.nreq:SNOB.ncall0],SNOB.f(SNOB.fbestHistory),best_marker,'MarkerSize',5,'LineWidth',2);
 		xlabel('Number of function calls');
 		ylabel('fbest');
 		hold on;

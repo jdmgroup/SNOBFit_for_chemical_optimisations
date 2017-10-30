@@ -78,6 +78,8 @@ function runcon(SNOB)
 
 			SNOB.xbest = xbest;
 			SNOB.fbest = fbest;
+			[~,jbest] = min(SNOB.fm);
+            SNOB.fbestHistory = [jbest]
 
 			notify(SNOB, 'DataToPlot');
 			notify(SNOB, 'DataToPrint');
@@ -116,6 +118,7 @@ function runcon(SNOB)
 
 		[SNOB.fbest,jbest] = min(SNOB.fm);
 		SNOB.xbest = SNOB.x(jbest,:);
+		SNOB.fbestHistory = [SNOB.fbestHistory; jbest];
 
 		isvalid = all(repmat(SNOB.F_lower', SNOB.npoint, 1) <= F & F <= repmat(SNOB.F_upper', SNOB.npoint, 1), 2);
 		if any(isvalid)

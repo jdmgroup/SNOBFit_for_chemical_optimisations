@@ -66,6 +66,8 @@ function runsnob(SNOB)
 
 			SNOB.xbest = xbest;
 			SNOB.fbest = fbest;
+			[~,jbest] = min(SNOB.f);
+            SNOB.fbestHistory = [jbest]
 
 			% print and plot results from starting point
 			notify(SNOB, 'DataToPlot');
@@ -104,6 +106,7 @@ function runsnob(SNOB)
 		[fdiff,jbest] = min(abs(SNOB.fglob - SNOB.f));
 		SNOB.fbest = SNOB.f(jbest,:);
 		SNOB.xbest = SNOB.x(jbest,:);
+		SNOB.fbestHistory = [SNOB.fbestHistory; jbest];
 
 		notify(SNOB, 'DataToPlot');
 		notify(SNOB, 'DataToPrint');

@@ -38,15 +38,14 @@ function flag = checkTermination(SNOB)
 
 		case 'no_change'
 		% when there is no change in a set number of previous points
-
-			% store history of fbest
-			if SNOB.ncall0 >= SNOB.minCalls
-				SNOB.fbestHistory = [SNOB.fbestHistory;SNOB.fbest];
+			if SNOB.constrained || SNOB.combo
+				count = sum(SNOB.fm(SNOB.fbestHistory) == SNOB.fbest);
+			else
+				count = sum(SNOB.f(SNOB.fbestHistory) == SNOB.fbest);
 			end
+			
 
-			count = length(find(SNOB.fbestHistory == SNOB.fbest));
-
-			if any(count >= SNOB.ncallNoChange)
+			if (count >= SNOB.ncallNoChange) && (SNOB.ncall0 >= SNOB.minCalls)
 				flag = 1;
 				if SNOB.constrained | SNOB.combo
 	
