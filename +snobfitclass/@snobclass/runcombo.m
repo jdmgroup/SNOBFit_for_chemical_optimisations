@@ -249,6 +249,12 @@ function runcombo(SNOB)
 				
 				x_old = SNOB.xVirt;
 				SNOB.fm = fm(:,1);
+
+                SNOB.fbestHistory = [];
+                for i = SNOB.nreq:SNOB.nreq:SNOB.ncall0
+                    [~,best_idx] = min(SNOB.fm(1:i));
+                    SNOB.fbestHistory = [SNOB.fbestHistory;best_idx];
+                end
 			end
 		end
 

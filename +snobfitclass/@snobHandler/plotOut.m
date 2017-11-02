@@ -27,10 +27,13 @@ function plotOut(SNOB)
 		ylabel('y');
 
 		subplot(1,3,3);
-		plot([SNOB.nreq:SNOB.nreq:SNOB.ncall0],SNOB.f(SNOB.fbestHistory),best_marker,'MarkerSize',5,'LineWidth',2);
+		if SNOB.combo || SNOB.constrained
+			plot([SNOB.nreq:SNOB.nreq:SNOB.ncall0],SNOB.fm(SNOB.fbestHistory),best_marker,'MarkerSize',5,'LineWidth',2);
+		else
+			plot([SNOB.nreq:SNOB.nreq:SNOB.ncall0],SNOB.f(SNOB.fbestHistory),best_marker,'MarkerSize',5,'LineWidth',2);
+		end
 		xlabel('Number of function calls');
 		ylabel('fbest');
-		hold on;
 	else
 		subplot(1,2,1);
 		scatter(SNOB.x(:,1),SNOB.x(:,2),50,abs(SNOB.fglob - SNOB.f));
@@ -40,10 +43,13 @@ function plotOut(SNOB)
 		ylabel('y');
 
 		subplot(1,2,2);
-		plot([SNOB.nreq:SNOB.nreq:SNOB.ncall0],SNOB.f(SNOB.fbestHistory),best_marker,'MarkerSize',5,'LineWidth',2);
+		if SNOB.combo || SNOB.constrained
+			plot([SNOB.nreq:SNOB.nreq:SNOB.ncall0],SNOB.fm(SNOB.fbestHistory),best_marker,'MarkerSize',5,'LineWidth',2);
+		else
+			plot([SNOB.nreq:SNOB.nreq:SNOB.ncall0],SNOB.f(SNOB.fbestHistory),best_marker,'MarkerSize',5,'LineWidth',2);
+		end
 		xlabel('Number of function calls');
 		ylabel('fbest');
-		hold on;
 	end
 
 end
