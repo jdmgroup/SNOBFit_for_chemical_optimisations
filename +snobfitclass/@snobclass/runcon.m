@@ -11,70 +11,83 @@ function runcon(SNOB)
 	working_file = fullfile(SNOB.filepath,'Working',SNOB.name); % JHB - platform independent folder naming
 
 	stop_condition = 0;
-	SNOB.ncall0 = 0;
-	change = 0;
+	if ~SNOB.continuing
+		SNOB.ncall0 = 0;
+		change = 0;
 
-	if isempty(SNOB.xstart)
-		x = rand(SNOB.npoint,SNOB.n);
-		x = x*diag(SNOB.x_upper - SNOB.x_lower) + ones(SNOB.npoint,1)*SNOB.x_lower';
-	else
-		x = rand(SNOB.npoint-1,SNOB.n);
-		x = x*diag(SNOB.x_upper - SNOB.x_lower) + ones(SNOB.npoint-1,1)*SNOB.x_lower';
-		x = [SNOB.xstart;x];
-	end
-
-	for i = 1:SNOB.npoint
-		x(i,:) = snobround(x(i,:),SNOB.x_lower',SNOB.x_upper',SNOB.dx);
-	end
-
-	x_old = x;
-
-	if SNOB.linked
-		[xx1,xx2] = snobfitclass.SquareToTrapezoid(x(:,1),x(:,2),SNOB.trapezoid);
-		x = [xx1,xx2];
-		if SNOB.n > 2
-			x = [x,x_old(:,3:end)];
+		if isempty(SNOB.xstart)
+			x = rand(SNOB.npoint,SNOB.n);
+			x = x*diag(SNOB.x_upper - SNOB.x_lower) + ones(SNOB.npoint,1)*SNOB.x_lower';
+		else
+			x = rand(SNOB.npoint-1,SNOB.n);
+			x = x*diag(SNOB.x_upper - SNOB.x_lower) + ones(SNOB.npoint-1,1)*SNOB.x_lower';
+			x = [SNOB.xstart;x];
 		end
-	end
 
-	SNOB.next = x;
+		for i = 1:SNOB.npoint
+			x(i,:) = snobround(x(i,:),SNOB.x_lower',SNOB.x_upper',SNOB.dx);
+		end
 
-	f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);
-	if size(f, 2) > size(f, 1)
-		error('Your objective function must return a column vector, it is returning a row vector or a scalar')
-	end
+		x_old = x;
 
-	F = feval(['snobfitclass.confcn.',SNOB.constraintFcn],SNOB);
-	if size(F, 1) ~= SNOB.npoint && size(F, 2) ~= length(SNOB.F_upper)
-		error('Each constraint must be returned as a column in F, you have returned them as rows')
-	end
+		if SNOB.linked
+			[xx1,xx2] = snobfitclass.SquareToTrapezoid(x(:,1),x(:,2),SNOB.trapezoid);
+			x = [xx1,xx2];
+			if SNOB.n > 2
+				x = [x,x_old(:,3:end)];
+			end
+		end
 
-	isvalid = all(repmat(SNOB.F_lower', SNOB.npoint, 1) <= F & F <= repmat(SNOB.F_upper', SNOB.npoint, 1), 2);
-	if any(isvalid)
-		SNOB.f0 = min(f(isvalid));
-		SNOB.feasiblePointFound = true;
+		SNOB.next = x;
+
+		f = feval(['snobfitclass.objfcn.',SNOB.fcn],SNOB);
+		if size(f, 2) > size(f, 1)
+			error('Your objective function must return a column vector, it is returning a row vector or a scalar')
+		end
+
+		F = feval(['snobfitclass.confcn.',SNOB.constraintFcn],SNOB);
+		if size(F, 1) ~= SNOB.npoint && size(F, 2) ~= length(SNOB.F_upper)
+			error('Each constraint must be returned as a column in F, you have returned them as rows')
+		end
+
+		isvalid = all(repmat(SNOB.F_lower', SNOB.npoint, 1) <= F & F <= repmat(SNOB.F_upper', SNOB.npoint, 1), 2);
+		if any(isvalid)
+			SNOB.f0 = min(f(isvalid));
+			SNOB.feasiblePointFound = true;
+		else
+			SNOB.f0 = 2 * max(f) - min(f);
+		end
+
+		SNOB.Delta = median(abs(f(~isnan(f)) - SNOB.f0));
+		for i = 1:SNOB.npoint
+			[fm(i,1), q(i,1), r(i,1)] = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
+										SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
+		end
+		fm(:,2) = sqrt(eps);
+
+		SNOB.x = x;
+		SNOB.f = f;
+		SNOB.F = F;
+		SNOB.fm = fm(:,1);
+		SNOB.q = q;
+		SNOB.r = r;
+
+		SNOB.ncall0 = SNOB.ncall0 + length(f);
+		params = struct('bounds',{SNOB.x_lower,SNOB.x_upper},'nreq',SNOB.nreq,'p',SNOB.p);
 	else
-		SNOB.f0 = 2 * max(f) - min(f);
+		x_old = SNOB.xVirt;
+		f = SNOB.f;
+		F = SNOB.F;
+		x = SNOB.x;
+        isvalid = all(repmat(SNOB.F_lower', length(F), 1) <= F & F <= repmat(SNOB.F_upper', length(F), 1), 2);
+		if any(isvalid)
+			SNOB.feasiblePointFound = true;
+		end
+        params = struct('bounds',{SNOB.x_lower,SNOB.x_upper},'nreq',SNOB.nreq,'p',SNOB.p);
+        change = 0;
 	end
 
 	SNOB.isFeasible = isvalid;
-
-	SNOB.Delta = median(abs(f(~isnan(f)) - SNOB.f0));
-	for i = 1:SNOB.npoint
-		[fm(i,1), q(i,1), r(i,1)] = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
-									SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
-	end
-	fm(:,2) = sqrt(eps);
-
-	SNOB.x = x;
-	SNOB.f = f;
-	SNOB.F = F;
-	SNOB.fm = fm(:,1);
-	SNOB.q = q;
-	SNOB.r = r;
-
-	SNOB.ncall0 = SNOB.ncall0 + length(f);
-	params = struct('bounds',{SNOB.x_lower,SNOB.x_upper},'nreq',SNOB.nreq,'p',SNOB.p);
 
 	while stop_condition == 0
 		if SNOB.ncall0 == SNOB.npoint
