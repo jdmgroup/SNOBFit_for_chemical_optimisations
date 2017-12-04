@@ -11,6 +11,8 @@ classdef snobclass < handle
 		Delta = Inf;	% scaling parameter for constraint merit function
 		feasiblePointFound = false; % if a feasible point has been found or not
 		isFeasible;    % array to store boolean for if point is feasible or not
+		isSemiFeasible = []; % array to store boolean for if point is semi-feasible or not
+		isInfeasible = []; % array to store boolean for if point is infeasible or not
 	end
 
 	properties (Hidden = true, SetObservable, AbortSet)

@@ -75,26 +75,29 @@ function runcombo(SNOB)
 	% enter loop until valid points are found
     if ~SNOB.continuing | isinf(SNOB.f0)
         fprintf('finding f0 by SNOBFit...\n')
+        fm = zeros(size(f));
+        q = zeros(size(f));
+        r = zeros(size(f));
         while ~any(isvalid)
             % want to minimise the penalty on F
-            above_bounds = SNOB.F - repmat(SNOB.F_upper', length(SNOB.F), 1);
-            below_bounds = repmat(SNOB.F_lower', length(SNOB.F), 1) - SNOB.F;
+            for i = 1:SNOB.nreq
+                [fm(i,1), q(i,1), r(i,1)] = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
+                                            SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
+            end
 
-            above_bounds(above_bounds <= 0) = 0;
-            below_bounds(below_bounds <= 0) = 0;
+            SNOB.fm = [SNOB.fm;fm];
+            SNOB.q = [SNOB.q;q];
+            SNOB.r = [SNOB.r;r(:, 1)];
+            SNOB.isSemiFeasible = [SNOB.isSemiFeasible; (r > 0) & (r < 1)];
+		    SNOB.isInfeasible = [SNOB.isInfeasible; (r >= 1)];
 
-            violation = sum(above_bounds.^2 ./ repmat(SNOB.sigma', length(SNOB.F), 1).^2, 2);
-            violation = violation + sum(below_bounds.^2 ./ repmat(SNOB.sigma', length(SNOB.F), 1).^2, 2);
-
-            penalty = 2 * violation ./ (1 + violation);
-
-            penalty(:,2) = sqrt(eps);
+            r(:,2) = sqrt(eps);
 
             % call snobfit to recommend points
             if SNOB.ncall0 == SNOB.npoint
-                [request,xbest,fbest] = snobfit(working_file, x_old, penalty, params, SNOB.dx);
+                [request,xbest,fbest] = snobfit(working_file, x_old, r, params, SNOB.dx);
             else
-                [request,xbest,fbest] = snobfit(working_file, x_old, penalty, params);
+                [request,xbest,fbest] = snobfit(working_file, x_old, r, params);
             end
 
             % extract recommended points
@@ -153,26 +156,14 @@ function runcombo(SNOB)
         fprintf('Found Delta as %f\n\n', SNOB.Delta)
 
         % calculate softmerit for all points looked at already
-        fm = zeros(length(SNOB.f),1);
-        q = zeros(length(SNOB.f),1);
-        r = zeros(length(SNOB.f),1);
-        for i = 1:length(SNOB.f)
-            [fm(i,1), q(i,1), r(i,1)] = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
-                                        SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
-        end
-        fm(:,2) = sqrt(eps);
-
-        SNOB.fm = fm(:,1);
-        SNOB.q = q;
-        SNOB.r = r;
 
         x_old = SNOB.xVirt;
-    else
-        fm = SNOB.fm;
-        fm(:,2) = sqrt(eps);
-        q = SNOB.q;
-        r = SNOB.r;
     end
+    
+    fm = SNOB.fm;
+    fm(:,2) = sqrt(eps);
+    q = SNOB.q;
+    r = SNOB.r;
 
 	% enter the constrained SNOBFit portion
 	while stop_condition == 0
@@ -222,6 +213,8 @@ function runcombo(SNOB)
 		SNOB.fm = [SNOB.fm;fm(:,1)];
         SNOB.q = [SNOB.q;q];
         SNOB.r = [SNOB.r;r];
+        SNOB.isSemiFeasible = [SNOB.isSemiFeasible; (r > 0) & (r < 1)];
+		SNOB.isInfeasible = [SNOB.isInfeasible; (r >= 1)];
 		SNOB.ncall0 = SNOB.ncall0 + length(f);
 
 		[SNOB.fbest,jbest] = min(SNOB.fm);
@@ -263,6 +256,8 @@ function runcombo(SNOB)
 				SNOB.fm = fm(:,1);
                 SNOB.q = q;
                 SNOB.r = r;
+                SNOB.isSemiFeasible = [SNOB.isSemiFeasible; (r > 0) & (r < 1)];
+		        SNOB.isInfeasible = [SNOB.isInfeasible; (r >= 1)];
 
                 SNOB.fbestHistory = [];
                 for i = SNOB.nreq:SNOB.nreq:SNOB.ncall0

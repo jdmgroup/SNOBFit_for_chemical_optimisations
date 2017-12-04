@@ -72,6 +72,9 @@ function runcon(SNOB)
 		SNOB.q = q;
 		SNOB.r = r;
 
+		SNOB.isSemiFeasible = (r > 0) & (r < 1);
+		SNOB.isInfeasible = (r >= 1);
+
 		SNOB.ncall0 = SNOB.ncall0 + length(f);
 		params = struct('bounds',{SNOB.x_lower,SNOB.x_upper},'nreq',SNOB.nreq,'p',SNOB.p);
 	else
@@ -137,6 +140,9 @@ function runcon(SNOB)
 		SNOB.r = [SNOB.r;r];
 		SNOB.ncall0 = SNOB.ncall0 + length(f);
 
+		SNOB.isSemiFeasible = [SNOB.isSemiFeasible; (r > 0) & (r < 1)];
+		SNOB.isInfeasible = [SNOB.isInfeasible; (r >= 1)];
+
 		[SNOB.fbest,jbest] = min(SNOB.fm);
 		SNOB.xbest = SNOB.x(jbest,:);
 		SNOB.fbestHistory = [SNOB.fbestHistory; jbest];
@@ -174,6 +180,9 @@ function runcon(SNOB)
 				SNOB.fm = fm(:,1);
 				SNOB.q = q;
 				SNOB.r = r;
+
+				SNOB.isSemiFeasible = (r > 0) & (r < 1);
+				SNOB.isInfeasible = (r >= 1);
 			end
 		end
 
