@@ -39,7 +39,7 @@
 % sigma    positive m-vector, where sigma(i) is the permitted violation 
 %          of constraint i
 %
-function fm = softmerit(f,F,F1,F2,f0,Delta,sigma_upper,sigma_lower)
+function [fm,q,r] = softmerit(f,F,F1,F2,f0,Delta,sigma_upper,sigma_lower)
 
 import snobfitclass.snobfcn.*
 
@@ -58,4 +58,8 @@ for i=1:m
     delta = delta + (F(i)-F2(i))^2/sigma_upper(i)^2;
   end
 end
-fm = (f-f0)/(Delta+abs(f-f0)) + 2*delta/(1+delta);
+
+q = (f - f0) / (Delta + abs(f - f0));
+r = 2 * delta / (1 + delta);
+
+fm = q + r

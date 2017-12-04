@@ -154,18 +154,24 @@ function runcombo(SNOB)
 
         % calculate softmerit for all points looked at already
         fm = zeros(length(SNOB.f),1);
+        q = zeros(length(SNOB.f),1);
+        r = zeros(length(SNOB.f),1);
         for i = 1:length(SNOB.f)
-            fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
-                                SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
+            [fm(i,1), q(i,1), r(i,1)] = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
+                                        SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
         end
         fm(:,2) = sqrt(eps);
 
         SNOB.fm = fm(:,1);
+        SNOB.q = q;
+        SNOB.r = r;
 
         x_old = SNOB.xVirt;
     else
         fm = SNOB.fm;
         fm(:,2) = sqrt(eps);
+        q = SNOB.q;
+        r = SNOB.r;
     end
 
 	% enter the constrained SNOBFit portion
@@ -201,9 +207,11 @@ function runcombo(SNOB)
 		F = feval(['snobfitclass.confcn.',SNOB.constraintFcn],SNOB);
 
 		fm = zeros(size(f));
+        q = zeros(size(f));
+        r = zeros(size(f));
 		for i = 1:SNOB.nreq
-			fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
-                                SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
+			[fm(i,1), q(i,1), r(i,1)] = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
+                                        SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
 		end
 		fm(:,2) = sqrt(eps);
 
@@ -212,6 +220,8 @@ function runcombo(SNOB)
 		SNOB.f = [SNOB.f;f];
 		SNOB.F = [SNOB.F;F];
 		SNOB.fm = [SNOB.fm;fm(:,1)];
+        SNOB.q = [SNOB.q;q];
+        SNOB.r = [SNOB.r;r];
 		SNOB.ncall0 = SNOB.ncall0 + length(f);
 
 		[SNOB.fbest,jbest] = min(SNOB.fm);
@@ -241,14 +251,18 @@ function runcombo(SNOB)
                 fprintf('Delta changed to %f\n\n', SNOB.Delta)
 
 				fm = zeros(K,1);
+                q = zeros(K,1);
+                r = zeros(K,1);
 				for i = 1:K
-					fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
-                                        SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
+					[fm(i,1), q(i,1), r(i,1)] = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
+                                                SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
 				end
 				fm(:,2) = sqrt(eps);
 				
 				x_old = SNOB.xVirt;
 				SNOB.fm = fm(:,1);
+                SNOB.q = q;
+                SNOB.r = r;
 
                 SNOB.fbestHistory = [];
                 for i = SNOB.nreq:SNOB.nreq:SNOB.ncall0

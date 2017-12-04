@@ -61,8 +61,8 @@ function runcon(SNOB)
 
 	SNOB.Delta = median(abs(f(~isnan(f)) - SNOB.f0));
 	for i = 1:SNOB.npoint
-		fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
-							SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
+		[fm(i,1), q(i,1), r(i,1)] = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
+									SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
 	end
 	fm(:,2) = sqrt(eps);
 
@@ -70,6 +70,8 @@ function runcon(SNOB)
 	SNOB.f = f;
 	SNOB.F = F;
 	SNOB.fm = fm(:,1);
+	SNOB.q = q;
+	SNOB.r = r;
 
 	SNOB.ncall0 = SNOB.ncall0 + length(f);
 	params = struct('bounds',{SNOB.x_lower,SNOB.x_upper},'nreq',SNOB.nreq,'p',SNOB.p);
@@ -106,9 +108,11 @@ function runcon(SNOB)
 		F = feval(['snobfitclass.confcn.',SNOB.constraintFcn],SNOB);
 
 		fm = zeros(size(f));
+		q = zeros(size(f));
+		r = zeros(size(f));
 		for i = 1:SNOB.nreq
-			fm(i,1) = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
-								SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
+			[fm(i,1), q(i,1), r(i,1)] = softmerit(f(i),F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
+										SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
 		end
 		fm(:,2) = sqrt(eps);
 
@@ -116,6 +120,8 @@ function runcon(SNOB)
 		SNOB.f = [SNOB.f;f];
 		SNOB.F = [SNOB.F;F];
 		SNOB.fm = [SNOB.fm;fm(:,1)];
+		SNOB.q = [SNOB.q;q];
+		SNOB.r = [SNOB.r;r];
 		SNOB.ncall0 = SNOB.ncall0 + length(f);
 
 		[SNOB.fbest,jbest] = min(SNOB.fm);
@@ -143,14 +149,18 @@ function runcon(SNOB)
 				SNOB.Delta = median(abs(SNOB.f(~isnan(SNOB.f)) - SNOB.f0));
 
 				fm = zeros(K,1);
+				q = zeros(K,1);
+				r = zeros(K,1);
 				for i = 1:K
-					fm(i,1) = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
-										SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
+					[fm(i,1), q(i,1), r(i,1)] = softmerit(SNOB.f(i),SNOB.F(i,:),SNOB.F_lower,SNOB.F_upper,SNOB.f0,...
+												SNOB.Delta,SNOB.sigmaUpper,SNOB.sigmaLower);
 				end
 				fm(:,2) = sqrt(eps);
 
 				x_old = SNOB.xVirt;
 				SNOB.fm = fm(:,1);
+				SNOB.q = q;
+				SNOB.r = r;
 			end
 		end
 

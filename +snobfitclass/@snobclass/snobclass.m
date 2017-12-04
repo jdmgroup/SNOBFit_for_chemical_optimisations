@@ -33,6 +33,8 @@ classdef snobclass < handle
 		f;			% Value of fcn at points investigated
 		F;			% Value of constraint fcn at points investigated
 		fm;			% constrained snobfit merit function
+		q;			% scaled objective function, part of constrained snobfit merit function
+		r;			% penalty function, part of constrained snobfit merit function
 		xVirt;		% Virtual Points investigated (only for linked)
 		n;			% Number of experiment parameters (dimension of problem)
 		ncall0;		% Number times snobfit has been called
